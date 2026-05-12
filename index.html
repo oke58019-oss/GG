@@ -9,28 +9,28 @@
         body { font-family: sans-serif; margin: 0; background: var(--bg-color); overflow-x: hidden; }
         .hidden { display: none !important; }
         
-        /* Login screen design */
+        /* Login Screen */
         #login-screen { height: 100vh; background: linear-gradient(135deg, #6c5ce7, #a29bfe); display: flex; align-items: center; justify-content: center; }
         .card { background: white; padding: 25px; border-radius: 20px; width: 300px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: var(--main-color); color: white; cursor: pointer; font-weight: bold; }
 
-        /* Dashboard Application Header */
+        /* Main Header */
         header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 10; }
         .profile-small { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--main-color); cursor: pointer; object-fit: cover; }
 
-        /* Story management styling */
+        /* Story Section */
         .story-bar { display: flex; gap: 15px; padding: 20px; background: white; overflow-x: auto; }
         .story-add { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #2ecc71; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
         .story-item { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #ddd; flex-shrink: 0; overflow: hidden; }
         .story-item img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Modal Overlays Layout */
+        /* Modals & Chat Stream */
         .modal { position: fixed; inset: 0; background: white; z-index: 100; display: flex; flex-direction: column; }
         .modal-header { padding: 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; }
         .chat-stream { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #efeae2; }
         
-        /* Message elements status system */
+        /* Message Bubbles & Ticks */
         .bubble { padding: 10px 15px; border-radius: 15px; max-width: 75%; position: relative; display: flex; flex-direction: column; }
         .bubble.me { background: #d9fdd3; align-self: flex-end; }
         .bubble.other { background: white; align-self: flex-start; }
@@ -38,25 +38,31 @@
         .tick.sent { color: #f39c12; }
         .tick.read { color: #2ecc71; }
         
-        /* Message composition input elements */
+        /* Input Layout Bar */
         .chat-input-bar { padding: 10px; background: #f0f0f0; display: flex; align-items: center; gap: 8px; }
         .media-btn { font-size: 22px; cursor: pointer; padding: 5px; }
         .rec-active { color: red; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0; } }
 
-        /* Dynamic directory listing and action floating button */
+        /* Directory Contacts & Floating Button */
         .contact-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: white; margin: 10px 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
         .big-img { width: 120px; height: 120px; border-radius: 50%; background: #eee; margin: 20px auto; display: block; border: 4px solid var(--main-color); object-fit: cover; }
         .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--main-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 90; }
         
-        /* Realistic Telephone System Interface Layout */
+        /* Telephony Screen Overlay Layout */
         .call-screen { position: fixed; inset: 0; background: linear-gradient(to bottom, #2c3e50, #1a252f); color: white; z-index: 300; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 60px 20px; text-align: center; }
         .call-avatar { width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; font-size: 50px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
         .call-controls-panel { display: flex; justify-content: space-around; width: 100%; max-width: 320px; margin-bottom: 40px; }
         .circle-btn { width: 60px; height: 60px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; color: white; transition: 0.2s; }
         .circle-btn.hangup { background: #ff4757; }
+        .circle-btn.accept { background: #2ecc71; }
         .circle-btn.option { background: rgba(255,255,255,0.15); }
         .circle-btn.option.active { background: #2ecc71; }
+
+        /* Beautiful Arrow Button Custom CSS Styling */
+        .back-arrow-btn { background: var(--main-color); color: white; border: none; font-size: 18px; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: 0.2s; padding: 0; margin-right: 10px; }
+        .back-arrow-btn:active { opacity: 0.8; }
+        .header-title-container { display: flex; align-items: center; justify-content: flex-start; flex: 1; }
     </style>
 </head>
 <body>
@@ -72,7 +78,7 @@
         </div>
     </div>
 
-    <!-- 2. MAIN APP -->
+    <!-- 2. MAIN APP DISPLAY -->
     <div id="main-app" class="hidden">
         <header>
             <h2 style="margin:0; color: var(--main-color);">Connect</h2>
@@ -94,12 +100,14 @@
         <div class="fab" onclick="openModal('search-modal')">+</div>
     </div>
 
-    <!-- 3. CHAT BOX -->
+    <!-- 3. MAIN CHAT BOX WINDOW SCREEN -->
     <div id="chat-modal" class="modal hidden">
         <div class="modal-header">
-            <button onclick="closeChatWindow()">Back</button>
-            <b id="chat-user-name" onclick="viewFriendProfile()">Friend Name</b>
-            <button onclick="startCall()" style="background:#2ecc71; width:auto; padding:5px 15px; border-radius:8px;">📞 Call</button>
+            <div class="header-title-container">
+                <button class="back-arrow-btn" onclick="closeChatWindow()">⬅️</button>
+                <b id="chat-user-name" onclick="viewFriendProfile()">Friend Name</b>
+            </div>
+            <button onclick="initiateRealCall()" style="background:#2ecc71; width:auto; padding:5px 15px; border-radius:8px; color:white; border:none; font-weight:bold; cursor:pointer;">📞 Call</button>
         </div>
         <div id="chat-stream" class="chat-stream"></div>
         <div class="chat-input-bar">
@@ -111,23 +119,67 @@
         </div>
     </div>
 
-    <!-- 4. CHATBOT MODAL -->
+    <!-- AUDIO WEBRTC ROUTING MECHANICS ELEMENTS -->
+    <audio id="remote-audio" autoplay></audio>
+
+    <!-- 4. REAL AUDIO CALL INTERFACE SCREEN PANEL -->
+    <div id="call-screen" class="call-screen hidden">
+        <div>
+            <div class="call-avatar">👤</div>
+            <h1 id="call-target" style="margin: 5px 0;">Name</h1>
+            <h3 id="call-status" style="color: #bdc3c7; font-weight: normal; margin: 5px 0;">Call Waiting...</h3>
+        </div>
+        
+        <h2 id="timer" style="font-size: 32px; font-weight: 300; letter-spacing: 1px; display: none;">00:00</h2>
+        
+        <div class="call-controls-panel">
+            <button id="speaker-btn" class="circle-btn option" onclick="toggleSpeaker()">🔊</button>
+            <button id="reject-btn" class="circle-btn hangup" onclick="hangUpRealCall()">📞</button>
+            <button id="accept-btn" class="circle-btn accept hidden" onclick="answerIncomingCall()">📞</button>
+        </div>
+    </div>
+
+    <!-- 5. SEARCH FRIEND DIRECTORY ENTRY LAYER -->
+    <div id="search-modal" class="modal hidden">
+        <div class="modal-header">
+            <div class="header-title-container">
+                <button class="back-arrow-btn" onclick="closeModal('search-modal')">⬅️</button>
+                <span>Find Friend</span>
+            </div>
+            <div></div>
+        </div>
+        <div style="padding: 20px;">
+            <input type="tel" id="search-ph" placeholder="Phone Number (Try: 09123456789)">
+            <button onclick="searchFriend()">Search</button>
+            <div id="search-res" style="margin-top:20px;"></div>
+        </div>
+    </div>
+
+    <!-- 6. USER ARTIFICIAL BOT OVERLAY PANEL -->
     <div id="bot-modal" class="modal hidden">
         <div class="modal-header">
-            <button onclick="closeModal('bot-modal')">Back</button>
-            <span>Welcome Chatbot</span>
+            <div class="header-title-container">
+                <button class="back-arrow-btn" onclick="closeModal('bot-modal')">⬅️</button>
+                <span>Welcome Chatbot</span>
+            </div>
             <div style="width:40px;"></div>
         </div>
         <div id="bot-msgs" style="flex:1; padding: 20px; overflow-y: auto; background: #efeae2;"></div>
         <div class="chat-input-bar">
-            <input type="text" id="bot-in" placeholder="Ask AI..." style="flex:1; padding:10px; border-radius:10px; border:1px solid #ddd;">
+            <input type="text" id="bot-in" style="flex:1; padding:10px; border-radius:10px; border:1px solid #ddd;" placeholder="Ask AI...">
             <button onclick="sendToBot()" style="width: 70px;">Send</button>
         </div>
     </div>
 
-    <!-- FRIEND PROFILE MODAL -->
+    <!-- FRIEND DETAILS DIRECTORY INFO OVERLAY -->
     <div id="friend-profile-modal" class="modal hidden">
-        <div class="modal-header"><button onclick="closeModal('friend-profile-modal')">Back</button><span>Friend Info</span><div></div></div>
+        <div class="modal-header">
+            <div class="header-title-container">
+                <button class="back-arrow-btn" onclick="closeModal('friend-profile-modal')">⬅️</button>
+                <span>Friend Info</span>
+            </div>
+            <div></div>
+        </div>
         <div style="text-align: center; padding: 20px;">
             <img src="flaticon.com" class="big-img">
             <h2 id="f-p-name">Friend</h2>
@@ -136,19 +188,15 @@
         </div>
     </div>
 
-    <!-- SEARCH MODAL -->
-    <div id="search-modal" class="modal hidden">
-        <div class="modal-header"><button onclick="closeModal('search-modal')">Back</button> <span>Find Friend</span> <div></div></div>
-        <div style="padding: 20px;">
-            <input type="tel" id="search-ph" placeholder="Phone (Try: 09123456789)">
-            <button onclick="searchFriend()">Search</button>
-            <div id="search-res" style="margin-top:20px;"></div>
-        </div>
-    </div>
-
-    <!-- OWN PROFILE MODAL -->
+    <!-- 7. OWN SUBSCRIBER REGISTRY PROFILE SHEET -->
     <div id="profile-modal" class="modal hidden">
-        <div class="modal-header"><button onclick="closeModal('profile-modal')">Back</button> <span>My Profile</span> <div></div></div>
+        <div class="modal-header">
+            <div class="header-title-container">
+                <button class="back-arrow-btn" onclick="closeModal('profile-modal')">⬅️</button>
+                <span>My Profile</span>
+            </div>
+            <div></div>
+        </div>
         <img src="flaticon.com" class="big-img">
         <div style="padding:20px; text-align:center;">
             <h2 id="my-name-disp">Name</h2>
@@ -158,47 +206,43 @@
         </div>
     </div>
 
-    <!-- CAMERA MODAL -->
+    <!-- 8. MEDIA ACQUISITION CAPTURING CAMERA SCREEN -->
     <div id="camera-modal" class="modal hidden" style="background:black;">
         <video id="video-feed" autoplay playsinline style="flex:1; object-fit:cover;"></video>
-        <div style="padding:30px; display:flex; justify-content:space-around; background:#000;">
-            <button onclick="closeCamera()">Back</button>
+        <div style="padding:30px; display:flex; justify-content:space-around; background:#000; align-items:center;">
+            <button class="back-arrow-btn" onclick="closeCamera()">⬅️</button>
             <button onclick="takeShot()" style="width:70px; height:70px; border-radius:50%; border:4px solid white; background:none;"></button>
-            <button onclick="flipCam()">Flip</button>
-        </div>
-    </div>
-
-    <!-- REALISTIC AUDIO TELEPHONY OVERLAY SCREEN -->
-    <div id="call-screen" class="call-screen hidden">
-        <div>
-            <div class="call-avatar">👤</div>
-            <h1 id="call-target" style="margin: 5px 0;">Name</h1>
-            <h3 id="call-status" style="color: #bdc3c7; font-weight: normal; margin: 5px 0;">Call Waiting...</h3>
-        </div>
-        
-        <h2 id="timer" style="font-size: 32px; font-weight: 300; letter-spacing: 1px; visibility: hidden;">00:00</h2>
-        
-        <div class="call-controls-panel">
-            <button id="speaker-btn" class="circle-btn option" onclick="toggleSpeaker()">🔊</button>
-            <button id="mute-btn" class="circle-btn option" onclick="toggleMute()">🎙️</button>
-            <button class="circle-btn hangup" onclick="endCall()">📞</button>
+            <button onclick="flipCam()" style="background:#444; color:white; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer;">Flip</button>
         </div>
     </div>
 
     <canvas id="hidden-canvas" class="hidden"></canvas>
 
     <script>
-        let mediaRecorder, audioChunks = [], isRecording = false, stream, camMode = "user", activeChatPhone = null;
+        let peerConnection, localStream, myPhone = "", targetPhone = "";
         let callTimerInterval, callProgressTimeout, ringerInterval, audioCtx;
+        let mediaRecorder, audioChunks = [], isRecording = false, camMode = "user", stream;
         let isSpeakerOn = false, isMuted = false;
 
         const mockDb = {"09123456789": {name: "Ko Mg Mg", phone: "09123456789"}};
 
-        // INITIAL SYSTEM BOOTSTRAP UPON RESTART
+        // DUAL COUPLING STORAGE EXCHANGE ROUTINES
+        window.addEventListener('storage', (e) => {
+            if (!myPhone) return;
+            if (e.key === `call_\${myPhone}` && e.newValue) {
+                let signal = JSON.parse(e.newValue);
+                if (signal.type === 'offer') handleIncomingOffer(signal);
+                if (signal.type === 'answer') handleIncomingAnswer(signal);
+                if (signal.type === 'ice') handleIncomingIce(signal);
+                if (signal.type === 'hangup') handleRemoteHangup();
+            }
+        });
+
         window.onload = () => {
             const savedUser = localStorage.getItem('user');
             if(savedUser) {
                 const u = JSON.parse(savedUser);
+                myPhone = u.phone;
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
                 document.getElementById('my-name-disp').innerText = u.name;
@@ -210,34 +254,39 @@
         };
 
         function login() {
-            const u = { name: document.getElementById('reg-name').value, phone: document.getElementById('reg-phone').value };
-            if(!u.name || !u.phone) return alert("Fill all!");
-            localStorage.setItem('user', JSON.stringify(u));
+            const name = document.getElementById('reg-name').value;
+            const phone = document.getElementById('reg-phone').value;
+            if(!name || !phone) return alert("Fill all!");
+            localStorage.setItem('user', JSON.stringify({name, phone}));
+            
+            let directory = JSON.parse(localStorage.getItem('global_directory')) || {};
+            directory[phone] = {name, phone};
+            localStorage.setItem('global_directory', JSON.stringify(directory));
+            
             localStorage.setItem('chats', JSON.stringify({}));
             localStorage.setItem('stories', JSON.stringify([]));
             localStorage.setItem('bot_msgs', JSON.stringify([{text: "Hello! I am AI. How can I help you?", isBot: true}]));
+            
             location.reload();
         }
         function logout() { localStorage.clear(); location.reload(); }
-
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // SUBSCRIBER RECOVERY MANAGEMENT
         function searchFriend() {
             const ph = document.getElementById('search-ph').value;
             const res = document.getElementById('search-res');
-            if(mockDb[ph]) {
-                res.innerHTML = `<div class="contact-item" onclick="startChat('${ph}')">
-                    <b>${mockDb[ph].name}</b> <span style="color:var(--main-color)">Chat</span>
-                </div>`;
+            let directory = JSON.parse(localStorage.getItem('global_directory')) || {"09123456789": {name: "Ko Mg Mg", phone: "09123456789"}};
+            if(directory[ph]) {
+                res.innerHTML = `<div class="contact-item" onclick="startChat('\({ph}')"><b>\){directory[ph].name}</b> <span style="color:var(--main-color)">Chat</span></div>`;
             } else { res.innerHTML = "No user found."; }
         }
 
         function startChat(ph) {
-            activeChatPhone = ph;
+            targetPhone = ph;
             closeModal('search-modal');
-            document.getElementById('chat-user-name').innerText = mockDb[ph].name;
+            let directory = JSON.parse(localStorage.getItem('global_directory')) || {"09123456789": {name: "Ko Mg Mg", phone: "09123456789"}};
+            document.getElementById('chat-user-name').innerText = directory[ph] ? directory[ph].name : ph;
             
             let chats = JSON.parse(localStorage.getItem('chats')) || {};
             if(!chats[ph]) chats[ph] = [];
@@ -248,42 +297,34 @@
             openModal('chat-modal');
         }
 
-        function closeChatWindow() {
-            closeModal('chat-modal');
-            activeChatPhone = null;
-            renderRecentChats();
-        }
+        function closeChatWindow() { closeModal('chat-modal'); targetPhone = ""; renderRecentChats(); }
 
         function renderRecentChats() {
             const chats = JSON.parse(localStorage.getItem('chats')) || {};
             const list = document.getElementById('recent-chats-list');
             list.innerHTML = "";
+            let directory = JSON.parse(localStorage.getItem('global_directory')) || {"09123456789": {name: "Ko Mg Mg", phone: "09123456789"}};
             for (let ph in chats) {
-                if(mockDb[ph]) {
-                    list.innerHTML += `<div class="contact-item" onclick="startChat('${ph}')">
-                        <b>${mockDb[ph].name}</b><small style="color:gray;">${ph}</small>
-                    </div>`;
-                }
+                list.innerHTML += `<div class="contact-item" onclick="startChat('\${ph}')"><b>\({directory[ph] ? directory[ph].name : ph}</b><small style="color:gray;">\){ph}</small></div>`;
             }
         }
 
         function renderChatStream() {
-            if(!activeChatPhone) return;
+            if(!targetPhone) return;
             const chats = JSON.parse(localStorage.getItem('chats')) || {};
             const stream = document.getElementById('chat-stream');
             stream.innerHTML = "";
             
-            (chats[activeChatPhone] || []).forEach(msg => {
+            (chats[targetPhone] || []).forEach(msg => {
                 if(msg.type === 'text') {
-                    stream.innerHTML += `<div class="bubble ${msg.sender}">
-                        ${msg.content}
-                        ${msg.sender === 'me' ? `<span class="tick ${msg.status === 'read' ? 'read' : 'sent'}">${msg.status === 'read' ? '✓✓' : '✓'}</span>` : ''}
+                    stream.innerHTML += `<div class="bubble \${msg.sender}">
+                        \({msg.content}\){msg.sender === 'me' ? `<span class="tick ${msg.status === 'read' ? 'read' : 'sent'}">${msg.status === 'read' ? '✓✓' : '✓'}</span>` : ''}
                     </div>`;
                 } else if(msg.type === 'media') {
-                    let mediaTag = msg.mediaType === 'img' ? `<img src="${msg.content}" style="width:100%; border-radius:10px;">` : `<video src="${msg.content}" controls style="width:100%; border-radius:10px;"></video>`;
-                    stream.innerHTML += `<div class="bubble ${msg.sender}">${mediaTag}</div>`;
+                    let mediaTag = msg.mediaType === 'img' ? `<img src="\${msg.content}" style="width:100%; border-radius:10px;">` : `<video src="\${msg.content}" controls style="width:100%; border-radius:10px;"></video>`;
+                    stream.innerHTML += `<div class="bubble \({msg.sender}">\){mediaTag}</div>`;
                 } else if(msg.type === 'voice') {
-                    stream.innerHTML += `<div class="bubble ${msg.sender}"><audio src="${msg.content}" controls></audio></div>`;
+                    stream.innerHTML += `<div class="bubble \({msg.sender}"><audio src="\){msg.content}" controls></audio></div>`;
                 }
             });
             stream.scrollTop = stream.scrollHeight;
@@ -297,116 +338,134 @@
             let msgId = Date.now();
             
             let newMsg = { id: msgId, type: 'text', sender: 'me', content: inp.value, status: 'sent' };
-            chats[activeChatPhone].push(newMsg);
+            chats[targetPhone].push(newMsg);
             localStorage.setItem('chats', JSON.stringify(chats));
             renderChatStream();
             inp.value = "";
 
             setTimeout(() => {
                 let currentChats = JSON.parse(localStorage.getItem('chats'));
-                let m = currentChats[activeChatPhone].find(x => x.id === msgId);
-                if(m) m.status = 'read';
-                localStorage.setItem('chats', JSON.stringify(currentChats));
-                renderChatStream();
+                if (currentChats[targetPhone]) {
+                    let m = currentChats[targetPhone].find(x => x.id === msgId);
+                    if(m) m.status = 'read';
+                    localStorage.setItem('chats', JSON.stringify(currentChats));
+                    renderChatStream();
+                }
             }, 1500);
         }
 
-        // TELEPHONY LOGIC ENGINE WITH INTEGRATED AUDIO AND VIBRATION
-        function startCall() {
+        /* WEBRTC NETWORKING AND REAL TELEPHONY CONTROLS */
+        async function initiateRealCall() {
             document.getElementById('call-target').innerText = document.getElementById('chat-user-name').innerText;
             document.getElementById('call-status').innerText = "Call Waiting...";
-            document.getElementById('timer').style.visibility = "hidden";
-            
-            // Reset state controls
-            isSpeakerOn = false; isMuted = false;
-            document.getElementById('speaker-btn').classList.remove('active');
-            document.getElementById('mute-btn').classList.remove('active');
-
+            document.getElementById('timer').style.display = "none";
+            document.getElementById('accept-btn').classList.add('hidden');
             openModal('call-screen');
-            playSoftRingtones();
+            playMelodyAlerts();
 
-            // Simulate call connection and answering mechanics after 4 seconds
-            callProgressTimeout = setTimeout(() => {
-                stopSoftRingtones();
-                document.getElementById('call-status').innerText = "Connected";
-                const timerElem = document.getElementById('timer');
-                timerElem.style.visibility = "visible";
-                timerElem.innerText = "00:00";
-                
-                let totalSeconds = 0;
-                clearInterval(callTimerInterval);
-                callTimerInterval = setInterval(() => {
-                    totalSeconds++;
-                    let mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-                    let secs = (totalSeconds % 60).toString().padStart(2, '0');
-                    timerElem.innerText = `${mins}:${secs}`;
-                }, 1000);
-            }, 4000);
+            localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:google.com' }] });
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+            peerConnection.ontrack = e => { document.getElementById('remote-audio').srcObject = e.streams; };
+            peerConnection.onicecandidate = e => { if (e.candidate) sendSignalingPayload({ type: 'ice', candidate: e.candidate }); };
+
+            let offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            sendSignalingPayload({ type: 'offer', sdp: offer.sdp, callerName: document.getElementById('my-name-disp').innerText, callerPhone: myPhone });
         }
 
-        // PROCEDURAL SWEET MELODY SOUND GENERATOR (WEB AUDIO API)
-        function playSoftRingtones() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // Triggers hardware vibration cadence loop
-            if (navigator.vibrate) {
-                navigator.vibrate([500, 1000, 500, 1000]);
-                ringerInterval = setInterval(() => {
-                    if (navigator.vibrate) navigator.vibrate([500, 1000, 500, 1000]);
-                    generateSweetTone();
-                }, 2500);
-            } else {
-                ringerInterval = setInterval(() => { generateSweetTone(); }, 2500);
-            }
-            generateSweetTone();
+        function sendSignalingPayload(payload) { localStorage.setItem(`call_\${targetPhone}`, JSON.stringify(payload)); }
+
+        function handleIncomingOffer(signal) {
+            targetPhone = signal.callerPhone;
+            document.getElementById('call-target').innerText = signal.callerName;
+            document.getElementById('call-status').innerText = "Incoming Call...";
+            document.getElementById('accept-btn').classList.remove('hidden');
+            document.getElementById('timer').style.display = "none";
+            openModal('call-screen');
+            playMelodyAlerts();
+            window.cachedSdp = signal.sdp;
         }
 
-        function generateSweetTone() {
-            if (!audioCtx) return;
-            let osc = audioCtx.createOscillator();
-            let gain = audioCtx.createGain();
-            
-            // Sine wave yields a round, pleasant sound parameters
-            osc.type = 'sine'; 
-            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5 Musical Key
-            osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.4); // E5 Key Transition
-            
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.8);
+        async function answerIncomingCall() {
+            stopMelodyAlerts();
+            document.getElementById('accept-btn').classList.add('hidden');
+            document.getElementById('call-status').innerText = "Connecting...";
+
+            localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:google.com' }] });
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+            peerConnection.ontrack = e => { document.getElementById('remote-audio').srcObject = e.streams; };
+            peerConnection.onicecandidate = e => { if (e.candidate) sendSignalingPayload({ type: 'ice', candidate: e.candidate }); };
+
+            await peerConnection.setRemoteDescription(new RTCSessionDescription({ type: 'offer', sdp: window.cachedSdp }));
+            let answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+
+            sendSignalingPayload({ type: 'answer', sdp: answer.sdp });
+            startCallTimer();
         }
 
-        function stopSoftRingtones() {
-            clearInterval(ringerInterval);
-            if (navigator.vibrate) navigator.vibrate(0); // Clear hardware vibration loops immediately
+        async function handleIncomingAnswer(signal) {
+            stopMelodyAlerts();
+            await peerConnection.setRemoteDescription(new RTCSessionDescription({ type: 'answer', sdp: signal.sdp }));
+            startCallTimer();
         }
 
-        function endCall() {
-            stopSoftRingtones();
-            clearTimeout(callProgressTimeout);
+        function handleIncomingIce(signal) { if (peerConnection) peerConnection.addIceCandidate(new RTCIceCandidate(signal.candidate)); }
+
+        function startCallTimer() {
+            document.getElementById('call-status').innerText = "Connected";
+            const timerElem = document.getElementById('timer');
+            timerElem.style.display = "block";
+            let secs = 0;
             clearInterval(callTimerInterval);
+            callTimerInterval = setInterval(() => {
+                secs++;
+                let m = Math.floor(secs / 60).toString().padStart(2, '0');
+                let s = (secs % 60).toString().padStart(2, '0');
+                timerElem.innerText = `\({m}:\){s}`;
+            }, 1000);
+        }
+
+        function hangUpRealCall() { sendSignalingPayload({ type: 'hangup' }); terminateHardwareStream(); }
+        function handleRemoteHangup() { terminateHardwareStream(); }
+
+        function terminateHardwareStream() {
+            stopMelodyAlerts();
+            clearInterval(callTimerInterval);
+            if (localStream) localStream.getTracks().forEach(t => t.stop());
+            if (peerConnection) peerConnection.close();
+            peerConnection = null;
+            localStorage.removeItem(`call_\${myPhone}`);
+            localStorage.removeItem(`call_\${targetPhone}`);
             closeModal('call-screen');
         }
 
-        function toggleSpeaker() {
-            isSpeakerOn = !isSpeakerOn;
-            let btn = document.getElementById('speaker-btn');
-            if(isSpeakerOn) btn.classList.add('active');
-            else btn.classList.remove('active');
+        function playMelodyAlerts() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (navigator.vibrate) navigator.vibrate();
+            ringerInterval = setInterval(() => {
+                if (navigator.vibrate) navigator.vibrate();
+                triggerSweetFrequency();
+            }, 2000);
+            triggerSweetFrequency();
         }
-
-        function toggleMute() {
-            isMuted = !isMuted;
-            let btn = document.getElementById('mute-btn');
-            if(isMuted) btn.classList.add('active');
-            else btn.classList.remove('active');
+        function triggerSweetFrequency() {
+            if (!audioCtx) return;
+            let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(698.46, audioCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.6);
         }
+        function stopMelodyAlerts() { clearInterval(ringerInterval); if (navigator.vibrate) navigator.vibrate(0); }
+        function toggleSpeaker() { alert("Speaker toggled"); }
 
-        // VOICE RECORDING CONTROLS
+        /* REAL INTEGRATED VOICE RECORDING */
         async function toggleVoiceRecord() {
             const btn = document.getElementById('mic-btn');
             if (!isRecording) {
@@ -423,7 +482,7 @@
                     reader.readAsDataURL(blob);
                     reader.onloadend = () => {
                         let chats = JSON.parse(localStorage.getItem('chats'));
-                        chats[activeChatPhone].push({ type: 'voice', sender: 'me', content: reader.result });
+                        chats[targetPhone].push({ type: 'voice', sender: 'me', content: reader.result });
                         localStorage.setItem('chats', JSON.stringify(chats));
                         renderChatStream();
                     }
@@ -442,82 +501,16 @@
             reader.readAsDataURL(file);
             reader.onloadend = () => {
                 let chats = JSON.parse(localStorage.getItem('chats'));
-                chats[activeChatPhone].push({ type: 'media', mediaType: mediaType, sender: 'me', content: reader.result });
+                chats[targetPhone].push({ type: 'media', mediaType: mediaType, sender: 'me', content: reader.result });
                 localStorage.setItem('chats', JSON.stringify(chats));
                 renderChatStream();
             }
         }
 
-        // CHATBOT INTERACTION EXECUTIONS
+        /* CHATBOT CONTROLS */
         function renderBotMessages() {
             const msgs = JSON.parse(localStorage.getItem('bot_msgs')) || [];
             const box = document.getElementById('bot-msgs');
             box.innerHTML = "";
             msgs.forEach(m => {
-                box.innerHTML += `<div style="background:${m.isBot ? 'white':'var(--main-color)'}; color:${m.isBot ? 'black':'white'}; padding:10px; border-radius:10px; margin:5px ${m.isBot ? 'auto 5px 0':'0 5px 5px auto'}; width:fit-content;">${m.text}</div>`;
-            });
-            box.scrollTop = box.scrollHeight;
-        }
-
-        function sendToBot() {
-            const inp = document.getElementById('bot-in');
-            if(!inp.value) return;
-            let msgs = JSON.parse(localStorage.getItem('bot_msgs')) || [];
-            msgs.push({text: inp.value, isBot: false});
-            localStorage.setItem('bot_msgs', JSON.stringify(msgs));
-            renderBotMessages();
-            
-            const userTxt = inp.value;
-            inp.value = "";
-
-            setTimeout(() => {
-                let currentMsgs = JSON.parse(localStorage.getItem('bot_msgs'));
-                currentMsgs.push({text: `"${userTxt}" အတွက် ကျေးဇူးတင်ပါတယ်။ ကျွန်တော်က AI ပါ။`, isBot: true});
-                localStorage.setItem('bot_msgs', JSON.stringify(currentMsgs));
-                renderBotMessages();
-            }, 800);
-        }
-
-        // STORIES LAYER ACTIONS
-        function renderStories() {
-            const stories = JSON.parse(localStorage.getItem('stories')) || [];
-            const list = document.getElementById('story-list');
-            list.innerHTML = "";
-            stories.forEach(s => {
-                list.innerHTML += `<div class="story-item"><img src="${s}"></div>`;
-            });
-        }
-
-        async function openCamera() {
-            openModal('camera-modal');
-            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: camMode } });
-            document.getElementById('video-feed').srcObject = stream;
-        }
-        function closeCamera() { stream.getTracks().forEach(t => t.stop()); closeModal('camera-modal'); }
-        function flipCam() { camMode = camMode === "user" ? "environment" : "user"; closeCamera(); openCamera(); }
-        
-        function takeShot() {
-            const video = document.getElementById('video-feed');
-            const canvas = document.getElementById('hidden-canvas');
-            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            let imgData = canvas.toDataURL('image/jpeg');
-            
-            let stories = JSON.parse(localStorage.getItem('stories')) || [];
-            stories.push(imgData);
-            localStorage.setItem('stories', JSON.stringify(stories));
-            
-            renderStories();
-            closeCamera();
-            alert("Story တင်ပြီးပါပြီ။ ၂၄ နာရီအတွင်း ပျောက်သွားပါမည်။");
-        }
-
-        function viewFriendProfile() {
-            if(!activeChatPhone) return;
-            document.getElementById('f-p-name').innerText = mockDb[activeChatPhone].name;
-            document.getElementById('f-p-phone').innerText = mockDb[activeChatPhone].phone;
-            openModal('friend-profile-modal');
-        }
-    </script>
-</body>
-</html>
+                box.innerHTML += `<
