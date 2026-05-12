@@ -3,131 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Connect App Pro</title>
+    <title>Connect Pro - Dual Camera Mode</title>
     <style>
-        :root { 
-            --primary-color: #8e44ad; 
-            --bg-color: #0f111a; 
-            --card-bg: #1a1d29; 
-            --text-color: #ffffff; 
-        }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow: hidden; transition: 0.3s; }
+        :root { --primary-color: #8e44ad; --bg-color: #0f111a; --card-bg: #1a1d29; --text-color: #ffffff; --accent-green: #2ecc71; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow: hidden; }
         .screen { display: none; height: 100vh; flex-direction: column; width: 100%; box-sizing: border-box; }
         .active { display: flex; }
+        
+        /* Layouts */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #333; background: var(--bg-color); }
         .container { padding: 20px; overflow-y: auto; flex-grow: 1; }
-        
-        /* Header */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #333; }
-        
-        /* Elements */
-        .btn-purple { background: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; }
-        .input-field { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #25293a; color: white; margin-bottom: 15px; box-sizing: border-box; }
         .item-card { background: var(--card-bg); padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
-        .avatar { width: 50px; height: 50px; border-radius: 50%; background: #444; display: flex; align-items: center; justify-content: center; font-size: 25px; cursor: pointer; }
+        .avatar { width: 45px; height: 45px; border-radius: 50%; background: #444; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; }
+        
+        /* Story Section */
+        .story-container { display: flex; gap: 15px; padding: 15px 20px; overflow-x: auto; border-bottom: 1px solid #222; }
+        .story-circle { min-width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--accent-green); display: flex; align-items: center; justify-content: center; font-size: 25px; cursor: pointer; }
 
-        /* Chat Screen Styles */
-        #chat-messages { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 10px 15px; border-radius: 15px; max-width: 70%; }
-        .msg.sent { background: var(--primary-color); align-self: flex-end; }
-        .chat-input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #333; }
+        /* Chat Bar */
+        .chat-input-bar { display: flex; align-items: center; gap: 10px; padding: 10px 15px; background: var(--card-bg); border-top: 1px solid #333; }
+        .chat-input-bar input { flex-grow: 1; background: #25293a; border: none; padding: 12px; border-radius: 20px; color: white; outline: none; }
 
-        /* Profile Specific */
-        .theme-dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: inline-block; margin: 5px; border: 2px solid white; }
+        /* Overlays (Full Screen Camera/Call) */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        video { width: 100%; height: 100%; object-fit: cover; }
+        .cam-controls { position: absolute; bottom: 50px; display: flex; gap: 30px; align-items: center; z-index: 1100; }
+        .shutter { width: 70px; height: 70px; border-radius: 50%; border: 5px solid white; cursor: pointer; }
+        .switch-btn { font-size: 35px; color: white; cursor: pointer; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 50%; }
+
+        .btn-purple { background: var(--primary-color); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<!-- 1. Login Screen -->
+<!-- Login Screen -->
 <div id="login-screen" class="screen active">
-    <div class="container" style="text-align:center; justify-content:center; display:flex; flex-direction:column;">
-        <h1>Login</h1>
-        <p>ကျေးဇူးပြု၍ ဖုန်းနံပါတ်ဖြင့် Login ဝင်ပါ။</p>
-        <input type="tel" id="login-phone" class="input-field" placeholder="Phone Number (09...)">
-        <button class="btn-purple" onclick="handleLogin()">Login ပြန်ဝင်မည်</button>
+    <div class="container" style="text-align:center; display:flex; flex-direction:column; justify-content:center;">
+        <h1>Connect</h1>
+        <input type="tel" id="login-phone" style="width:100%; padding:15px; border-radius:10px; border:none; background:#25293a; color:white; margin-bottom:15px;" placeholder="Phone Number (09...)">
+        <button class="btn-purple" onclick="handleLogin()">Login</button>
     </div>
 </div>
 
-<!-- 2. Home Screen (CHATS) -->
+<!-- Home Screen -->
 <div id="home-screen" class="screen">
     <div class="header">
-        <div style="font-weight:bold;">CHATS</div>
-        <div style="display:flex; gap:15px; align-items:center;">
-            <div class="avatar" style="width:35px; height:35px; font-size:18px;" onclick="showScreen('profile-screen')">👤</div>
-        </div>
+        <span style="font-weight:bold;">Connect</span>
+        <div class="avatar" style="width:35px; height:35px; font-size:18px;" onclick="showScreen('profile-screen')">👤</div>
+    </div>
+    <div class="story-container">
+        <div class="story-circle" style="border: 2px dashed #555;" onclick="openCamera('story')">+</div>
+        <div class="story-circle">👦</div>
+        <div class="story-circle">👧</div>
     </div>
     <div class="container" id="chat-list">
-        <!-- Chat list items here -->
-    </div>
-    <div style="position:fixed; bottom:30px; right:20px;" class="btn-purple" onclick="showScreen('contacts-screen')">Contacts +</div>
-</div>
-
-<!-- 3. Contacts Screen -->
-<div id="contacts-screen" class="screen">
-    <div class="header">
-        <div onclick="showScreen('home-screen')">← Back</div>
-        <div style="font-weight:bold;">CONTACTS</div>
-        <div></div>
-    </div>
-    <div class="container">
-        <input type="text" class="input-field" placeholder="Search friends...">
-        <div id="contacts-list">
-            <!-- Contacts will load here -->
-        </div>
+        <!-- Chats will load here -->
     </div>
 </div>
 
-<!-- 4. Chat Window -->
+<!-- Chat Window -->
 <div id="chat-window" class="screen">
     <div class="header">
         <div onclick="showScreen('home-screen')">←</div>
-        <div id="chat-user-name" style="font-weight:bold;">Name</div>
-        <div style="display:flex; gap:15px;">📞 📹</div>
+        <div id="chat-user-name" style="font-weight:bold;">User</div>
+        <div style="display:flex; gap:15px;">
+            <span onclick="alert('Calling...')">📞</span>
+            <span onclick="openCamera('vc')">📹</span>
+        </div>
     </div>
-    <div id="chat-messages"></div>
-    <div class="chat-input-area">
-        <span onclick="alert('Image/Video upload coming...')">🖼️</span>
-        <input type="text" id="msg-input" class="input-field" style="margin-bottom:0;" placeholder="စာရိုက်ပါ...">
-        <button class="btn-purple" onclick="sendMessage()">Send</button>
+    <div class="container" id="chat-messages" style="background:#0b0d14;"></div>
+    <div class="chat-input-bar">
+        <span style="font-size:20px; cursor:pointer;">🖼️</span>
+        <input type="text" id="msg-input" placeholder="Message...">
+        <button style="background:none; border:none; color:var(--primary-color); font-weight:bold;" onclick="sendMessage()">Send</button>
     </div>
 </div>
 
-<!-- 5. Profile Screen -->
-<div id="profile-screen" class="screen">
-    <div class="container" style="text-align:center;">
-        <div onclick="showScreen('home-screen')" style="text-align:left; cursor:pointer;">← Back</div>
-        <div class="avatar" style="width:100px; height:100px; margin: 20px auto; font-size:50px;">👤</div>
-        <input type="text" id="user-name" class="input-field" placeholder="သင့်နာမည်" value="My Name">
-        <input type="text" id="user-bio" class="input-field" placeholder="Bio ရေးရန်" value="Enjoying Connect App!">
+<!-- Camera Overlay (Selfie/Back Switching) -->
+<div id="camera-overlay" class="overlay">
+    <video id="video-preview" autoplay playsinline></video>
+    <div class="cam-controls">
+        <!-- Album/Gallery -->
+        <span style="font-size:30px; cursor:pointer;" onclick="alert('Open Gallery...')">🖼️</span>
         
-        <div style="text-align:left; margin-top:10px;">
-            <label>Phone: </label><span id="display-phone"></span><br><br>
-            <label>Privacy: </label>
-            <select class="input-field" style="display:inline-block; width:auto;">
-                <option>Only Me</option>
-                <option>Friends Only</option>
-                <option>Public</option>
-            </select>
-        </div>
-
-        <div style="margin-top:20px; text-align:left;">
-            <p>Theme Color ရွေးချယ်ရန်:</p>
-            <div class="theme-dot" style="background:#8e44ad;" onclick="changeTheme('#8e44ad')"></div>
-            <div class="theme-dot" style="background:#2ecc71;" onclick="changeTheme('#2ecc71')"></div>
-            <div class="theme-dot" style="background:#e74c3c;" onclick="changeTheme('#e74c3c')"></div>
-            <div class="theme-dot" style="background:#3498db;" onclick="changeTheme('#3498db')"></div>
-        </div>
-
-        <button class="btn-purple" style="background:#e74c3c; width:100%; margin-top:30px;" onclick="showScreen('login-screen')">Log Out ထွက်မည်</button>
+        <!-- Shutter Button -->
+        <div class="shutter" onclick="closeOverlay()"></div>
+        
+        <!-- Camera Switch Button (Selfie vs Back) -->
+        <div class="switch-btn" onclick="switchCamera()">🔄</div>
+        
+        <!-- Exit -->
+        <span style="font-size:30px; cursor:pointer; position:absolute; top:-500px; right: 0;" onclick="closeOverlay()">✕</span>
     </div>
+    <h3 id="cam-type" style="position:absolute; top:20px; color:white;">Story Mode</h3>
 </div>
 
 <script>
-    let currentPhone = "";
-    const mockContacts = [
-        { name: "Kyaw Kyaw", phone: "091234567", icon: "👦", bio: "Available" },
-        { name: "Su Su", phone: "097778889", icon: "👧", bio: "Busy" },
-        { name: "Aung Aung", phone: "094455667", icon: "👨", bio: "At School" }
-    ];
+    let currentStream = null;
+    let useFrontCamera = true; // Default as Selfie
+    let currentMode = 'story';
 
     function showScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -135,50 +109,71 @@
     }
 
     function handleLogin() {
-        currentPhone = document.getElementById('login-phone').value;
-        if(currentPhone) {
-            document.getElementById('display-phone').innerText = currentPhone;
-            loadContacts();
+        if(document.getElementById('login-phone').value) {
             showScreen('home-screen');
-        } else { alert("ဖုန်းနံပါတ်ထည့်ပါ"); }
+            loadChats();
+        }
     }
 
-    function loadContacts() {
-        const list = document.getElementById('contacts-list');
-        list.innerHTML = "";
-        mockContacts.forEach(c => {
-            list.innerHTML += `
-                <div class="item-card">
-                    <div class="avatar" onclick="viewFriendData('${c.name}', '${c.bio}', '${c.icon}')">${c.icon}</div>
-                    <div style="flex-grow:1;"><b>${c.name}</b></div>
-                    <button class="btn-purple" onclick="openChat('${c.name}')">Chat</button>
-                </div>`;
-        });
-    }
-
-    function viewFriendData(name, bio, icon) {
-        alert("Friend Profile:\nName: " + name + "\nBio: " + bio + "\nIcon: " + icon);
+    function loadChats() {
+        document.getElementById('chat-list').innerHTML = `
+            <div class="item-card" onclick="openChat('Welcome Bot')">
+                <div class="avatar">🤖</div>
+                <div style="flex-grow:1;"><b>Welcome Bot</b><br><small>Hi there!</small></div>
+            </div>`;
     }
 
     function openChat(name) {
         document.getElementById('chat-user-name').innerText = name;
-        document.getElementById('chat-messages').innerHTML = "";
         showScreen('chat-window');
     }
 
-    function sendMessage() {
-        const input = document.getElementById('msg-input');
-        if(input.value) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = "msg sent";
-            msgDiv.innerText = input.value;
-            document.getElementById('chat-messages').appendChild(msgDiv);
-            input.value = "";
+    function openCamera(mode) {
+        currentMode = mode;
+        document.getElementById('cam-type').innerText = mode === 'story' ? "Story Mode" : "Video Call";
+        document.getElementById('camera-overlay').style.display = 'flex';
+        startStream();
+    }
+
+    function startStream() {
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+        }
+
+        const constraints = {
+            video: { facingMode: (useFrontCamera ? "user" : "environment") }
+        };
+
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(stream => {
+                currentStream = stream;
+                document.getElementById('video-preview').srcObject = stream;
+            })
+            .catch(err => alert("Camera error: " + err));
+    }
+
+    function switchCamera() {
+        useFrontCamera = !useFrontCamera; // Toggle Selfie/Back
+        startStream(); // Restart stream with new camera
+    }
+
+    function closeOverlay() {
+        document.getElementById('camera-overlay').style.display = 'none';
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
         }
     }
 
-    function changeTheme(color) {
-        document.documentElement.style.setProperty('--primary-color', color);
+    function sendMessage() {
+        let inp = document.getElementById('msg-input');
+        if(inp.value) {
+            let m = document.createElement('div');
+            m.style.padding = "10px"; m.style.background = "var(--primary-color)";
+            m.style.alignSelf = "flex-end"; m.style.borderRadius = "10px";
+            m.style.margin = "5px"; m.innerText = inp.value;
+            document.getElementById('chat-messages').appendChild(m);
+            inp.value = "";
+        }
     }
 </script>
 
