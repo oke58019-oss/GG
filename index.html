@@ -3,87 +3,141 @@
 <head>
 <meta charset="UTF-8">
 <title>Chat App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{margin:0;font-family:sans-serif}
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:#87CEEB;
+}
+
+/* PAGE */
+.page{display:none;height:100vh;}
 
 /* LOGIN */
-#login{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh}
-input{margin:5px;padding:10px;width:220px}
+#login{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+input{
+  margin:6px;
+  padding:10px;
+  width:220px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
 
 /* CHAT */
-#chat{display:none;height:100vh;background:skyblue;position:relative}
+#chat{
+  position:relative;
+  background:#87CEEB;
+}
+#topBar{
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
 #profileBtn{
-  position:absolute;top:10px;left:10px;
-  width:50px;height:50px;border-radius:50%;
-  background:#ccc;overflow:hidden
+  position:absolute;
+  left:10px;
+  width:45px;height:45px;
+  border-radius:50%;
+  background:#ccc;
+  overflow:hidden;
 }
 #profileBtn img{width:100%;height:100%}
 
-/* STORY */
 #storyBtn{
- position:absolute;top:10px;left:50%;
- transform:translateX(-50%);
- width:60px;height:60px;border-radius:50%;
- border:3px solid green;text-align:center;line-height:60px;
- cursor:pointer
+  width:55px;height:55px;
+  border-radius:50%;
+  border:3px solid green;
+  text-align:center;
+  line-height:55px;
+  background:#fff;
+  cursor:pointer;
 }
 
-/* MESSAGE */
 #messages{
- position:absolute;bottom:80px;width:100%;height:60%;overflow:auto
+  height:60%;
+  overflow:auto;
+  padding:10px;
 }
 
 /* INPUT */
 #inputArea{
- position:absolute;bottom:0;width:100%;display:flex
+  position:absolute;
+  bottom:0;
+  width:100%;
+  display:flex;
 }
-#inputArea input{flex:1}
+#msg{flex:1}
 #file{display:none}
 
-/* PROFILE PAGE */
-#profile{display:none;padding:20px}
-.color{width:30px;height:30px;display:inline-block;margin:5px;cursor:pointer}
+/* PROFILE */
+#profile{
+  padding:10px;
+}
+.color{
+  width:30px;height:30px;
+  display:inline-block;
+  margin:5px;
+  border-radius:5px;
+}
 
-/* STORY VIEW */
-#storyView{display:none;padding:20px}
+/* STORY */
+#storyPage{padding:10px}
+
+button{
+  padding:8px;
+  border:none;
+  border-radius:6px;
+  background:#333;
+  color:#fff;
+}
 </style>
 
 </head>
 <body>
 
 <!-- LOGIN -->
-<div id="login">
+<div id="login" class="page" style="display:flex">
 <h2>Login</h2>
-<input id="name" placeholder="Name">
+<input id="name" placeholder="Username">
 <input id="phone" placeholder="Phone">
 <input id="pass" type="password" placeholder="Password">
 <button onclick="login()">Login</button>
 </div>
 
 <!-- CHAT -->
-<div id="chat">
+<div id="chat" class="page">
+<div id="topBar">
 <div id="profileBtn" onclick="openProfile()"></div>
-<div id="storyBtn" onclick="openStoryUpload()">+</div>
+<div id="storyBtn" onclick="openStory()">+</div>
+</div>
 
 <div id="messages"></div>
 
 <div id="inputArea">
-<button onclick="openFile()">+</button>
+<button onclick="file.click()">+</button>
 <input type="file" id="file" accept="image/*,video/*">
-<input id="msg">
+<input id="msg" placeholder="Type message...">
 <button onclick="sendMsg()">Send</button>
 </div>
 </div>
 
 <!-- PROFILE -->
-<div id="profile">
-<button onclick="back()">⬅</button>
+<div id="profile" class="page">
+<button onclick="backChat()">⬅ Back</button>
 <h2 id="pname"></h2>
 <img id="pimg" width="100"><br><br>
 
-<input type="file" id="pUpload"><br>
-<button onclick="changeProfile()">Change Profile</button>
+<input type="file" id="pfile">
+<button onclick="changeProfile()">Change</button>
 <button onclick="deleteProfile()">Delete</button>
 
 <p>ID: <span id="pid"></span></p>
@@ -91,4 +145,181 @@ input{margin:5px;padding:10px;width:220px}
 <select id="privacy">
 <option>Only me</option>
 <option>Friend only</option>
-<option>
+<option>Public</option>
+</select>
+
+<br><br>
+<textarea id="bio" placeholder="Bio"></textarea>
+
+<h3>Background</h3>
+<div class="color" style="background:pink" onclick="setBg('pink')"></div>
+<div class="color" style="background:orange" onclick="setBg('orange')"></div>
+<div class="color" style="background:lightgreen" onclick="setBg('lightgreen')"></div>
+<div class="color" style="background:white" onclick="setBg('white')"></div>
+<div class="color" style="background:black" onclick="setBg('black')"></div>
+
+</div>
+
+<!-- STORY -->
+<div id="storyPage" class="page">
+<button onclick="backChat()">⬅ Back</button>
+
+<input type="file" id="storyFile" accept="image/*,video/*"><br><br>
+
+<select id="storyPrivacy">
+<option>Only me</option>
+<option>Friend only</option>
+<option>Public</option>
+</select>
+
+<button onclick="uploadStory()">Upload</button>
+</div>
+
+<script>
+
+// LOGIN
+function login(){
+ let name=document.getElementById("name").value;
+ let phone=document.getElementById("phone").value;
+ let pass=document.getElementById("pass").value;
+
+ if(localStorage.pass && localStorage.pass!==pass){
+   alert("Password မှားပါတယ်");
+   return;
+ }
+
+ localStorage.name=name;
+ localStorage.phone=phone;
+ localStorage.pass=pass;
+
+ showChat();
+}
+
+// SHOW CHAT
+function showChat(){
+ hideAll();
+ document.getElementById("chat").style.display="block";
+
+ loadProfile();
+ loadMsg();
+
+ addMsg("🤖 Welcome AI");
+}
+
+// SEND MESSAGE
+function sendMsg(){
+ let m=document.getElementById("msg").value;
+ if(!m) return;
+
+ saveMsg("✔ "+m);
+ document.getElementById("msg").value="";
+}
+
+// FILE SEND (GALLERY)
+file.onchange=function(){
+ let f=file.files[0];
+ let url=URL.createObjectURL(f);
+
+ if(f.type.startsWith("image")){
+   saveMsg("<img src='"+url+"' width='120'> ✔");
+ }else{
+   saveMsg("<video src='"+url+"' width='120' controls></video> ✔");
+ }
+}
+
+// SAVE MESSAGE
+function saveMsg(m){
+ let arr=JSON.parse(localStorage.msg||"[]");
+ arr.push(m);
+ localStorage.msg=JSON.stringify(arr);
+ loadMsg();
+}
+
+// LOAD MSG
+function loadMsg(){
+ messages.innerHTML="";
+ let arr=JSON.parse(localStorage.msg||"[]");
+ arr.forEach(m=>{
+   let d=document.createElement("div");
+   d.innerHTML=m;
+   messages.appendChild(d);
+ });
+}
+
+// PROFILE
+function openProfile(){
+ hideAll();
+ document.getElementById("profile").style.display="block";
+
+ pname.innerText=localStorage.name;
+ pid.innerText=localStorage.phone;
+ pimg.src=localStorage.pimg||"";
+ bio.value=localStorage.bio||"";
+}
+
+// PROFILE CHANGE
+function changeProfile(){
+ let f=pfile.files[0];
+ if(!f) return;
+ localStorage.pimg=URL.createObjectURL(f);
+ loadProfile();
+}
+
+// DELETE PROFILE
+function deleteProfile(){
+ localStorage.removeItem("pimg");
+ loadProfile();
+}
+
+// LOAD PROFILE ICON
+function loadProfile(){
+ if(localStorage.pimg){
+   profileBtn.innerHTML="<img src='"+localStorage.pimg+"'>";
+ }
+}
+
+// STORY
+function openStory(){
+ hideAll();
+ storyPage.style.display="block";
+}
+
+function uploadStory(){
+ let f=storyFile.files[0];
+ if(!f) return;
+
+ localStorage.story=Date.now();
+ alert("Story uploaded (24hr demo)");
+ backChat();
+}
+
+// BG
+function setBg(c){
+ chat.style.background=c;
+ localStorage.bg=c;
+}
+
+// BACK
+function backChat(){
+ hideAll();
+ chat.style.display="block";
+}
+
+// HIDE ALL
+function hideAll(){
+ document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+}
+
+// INIT
+if(localStorage.pass){
+ showChat();
+}
+
+if(localStorage.bg){
+ chat.style.background=localStorage.bg;
+}
+
+</script>
+
+</body>
+</html>
