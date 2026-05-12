@@ -1,117 +1,256 @@
 <!DOCTYPE html>
-<html lang="my">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messenger Pro Max (Anti-Exit)</title>
+    <title>Social Connect App</title>
     <style>
-        :root { --primary-color: #075e54; --app-bg: #0b141a; }
-        body { font-family: sans-serif; margin: 0; background: var(--app-bg); color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        :root { --main-color: #00b894; --bg-color: #f9f9f9; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg-color); transition: 0.3s; }
+        .hidden { display: none !important; }
         
-        header { background: #1f2c34; padding: 15px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #2a3942; }
-        .user-info { flex: 1; font-weight: bold; }
+        /* Login Section */
+        #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(45deg, #00b894, #00cec9); }
+        .card { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 85%; max-width: 350px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: var(--main-color); color: white; font-weight: bold; cursor: pointer; }
 
-        #message-area { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 10px 14px; border-radius: 12px; max-width: 75%; font-size: 15px; }
-        .sent { align-self: flex-end; background: #005c4b; color: white; }
-        .received { align-self: flex-start; background: #202c33; color: white; }
+        /* App Header */
+        header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
+        .profile-thumb { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--main-color); cursor: pointer; }
 
-        .input-bar { background: #1f2c34; padding: 10px; display: flex; align-items: center; gap: 10px; }
-        .input-bar input { flex: 1; background: #2a3942; border: none; padding: 12px 15px; border-radius: 25px; color: white; outline: none; }
-        .action-btn { background: #00a884; border: none; width: 45px; height: 45px; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        /* Story Section */
+        .story-bar { padding: 15px; display: flex; gap: 10px; background: white; overflow-x: auto; }
+        .story-add { width: 65px; height: 65px; border-radius: 50%; border: 3px solid #2ecc71; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+        .story-item { width: 65px; height: 65px; border-radius: 50%; border: 3px solid #ddd; flex-shrink: 0; overflow: hidden; }
+        .story-item img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Full Screen Modals */
-        .modal-screen { display: none; position: fixed; inset: 0; background: #0b141a; z-index: 5000; flex-direction: column; padding: 20px; }
-        .contact-item { background: #1f2c34; padding: 15px; border-radius: 10px; margin-bottom: 10px; cursor: pointer; }
+        /* Camera Modal */
+        #camera-modal { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; }
+        #video-feed { flex: 1; width: 100%; object-fit: cover; }
+        .cam-btns { height: 120px; display: flex; justify-content: space-around; align-items: center; background: rgba(0,0,0,0.8); }
+
+        /* Story Preview Modal */
+        #story-confirm { position: fixed; inset: 0; background: #000; z-index: 101; display: flex; flex-direction: column; color: white; }
+        #captured-image { flex: 1; object-fit: contain; width: 100%; }
+        .confirm-box { padding: 20px; background: rgba(0,0,0,0.9); }
+
+        /* Chatbot Box */
+        .ai-chat { margin: 15px; background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .chat-log { height: 150px; overflow-y: auto; font-size: 14px; margin-bottom: 10px; }
+        
+        /* Profile Overlay */
+        #profile-overlay { position: fixed; inset: 0; background: white; z-index: 200; padding: 20px; }
+        .profile-img-big { width: 100px; height: 100px; border-radius: 50%; background: #eee; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="user-info">AI Chat Bot 🤖</div>
-        <button onclick="openContacts()" style="background:#00a884; color:white; border:none; padding:8px 12px; border-radius:5px;">👤 Contacts</button>
-    </header>
-
-    <div id="message-area"></div>
-
-    <div class="input-bar">
-        <input type="text" id="msg-input" placeholder="စာရိုက်ပါ...">
-        <button class="action-btn" onclick="sendMessage()">➤</button>
+    <!-- LOGIN -->
+    <div id="login-screen">
+        <div class="card">
+            <h2 style="text-align: center; color: var(--main-color);">Connect Login</h2>
+            <input type="text" id="u-name" placeholder="User Name">
+            <input type="tel" id="u-phone" placeholder="Phone Number">
+            <input type="password" id="u-pass" placeholder="Password">
+            <button onclick="login()">Get Started</button>
+        </div>
     </div>
 
-    <!-- Contacts Modal -->
-    <div id="contact-modal" class="modal-screen">
-        <h3>ဖုန်းနံပါတ်များ</h3>
-        <div id="contact-list" style="overflow-y: auto; flex:1;"></div>
-        <button onclick="goBack()" style="padding:15px; background:red; color:white; border:none; border-radius:10px; margin-top:10px;">နောက်သို့</button>
+    <!-- MAIN APP -->
+    <div id="app-main" class="hidden">
+        <header>
+            <h3 style="margin:0; color: var(--main-color);">MESSENGER</h3>
+            <img src="https://flaticon.com" class="profile-thumb" onclick="openProfile()">
+        </header>
+
+        <!-- Stories -->
+        <div class="story-bar">
+            <div class="story-add" onclick="startCamera()">
+                <div style="background: #eee; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;">+</div>
+            </div>
+            <div id="active-stories" style="display: flex; gap: 10px;"></div>
+        </div>
+
+        <!-- Bot -->
+        <div class="ai-chat">
+            <b>Welcome Chatbot (AI)</b>
+            <div id="chat-box" class="chat-log">
+                <div style="color: #666;">AI: Hello! Start chatting with me...</div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="ai-input" placeholder="Type here...">
+                <button onclick="aiReply()" style="width: 60px;">Send</button>
+            </div>
+        </div>
+
+        <button style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; font-size: 25px;">+</button>
+    </div>
+
+    <!-- CAMERA MODAL -->
+    <div id="camera-modal" class="hidden">
+        <video id="video-feed" autoplay playsinline></video>
+        <div class="cam-btns">
+            <button onclick="stopCamera()" style="background: grey;">Cancel</button>
+            <button onclick="takePhoto()" style="width: 70px; height: 70px; border-radius: 50%; border: 5px solid white;"></button>
+            <button onclick="flipCamera()">Flip</button>
+        </div>
+    </div>
+
+    <!-- STORY CONFIRMATION -->
+    <div id="story-confirm" class="hidden">
+        <canvas id="canvas" class="hidden"></canvas>
+        <img id="captured-image">
+        <div class="confirm-box">
+            <label>Who can see this?</label>
+            <select id="story-privacy">
+                <option value="Public">Public</option>
+                <option value="Friends Only">Friends Only</option>
+                <option value="Only Me">Only Me</option>
+            </select>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="cancelPost()" style="background: #555;">မတင်ပါ</button>
+                <button onclick="postStory()">တင်မည်</button>
+            </div>
+            <p style="font-size: 12px; color: #aaa; text-align: center; margin-top: 10px;">* ပိုစ့်တင်ပြီး ၂၄ နာရီအကြာတွင် အလိုအလျောက် ပျောက်သွားပါမည်။</p>
+        </div>
+    </div>
+
+    <!-- PROFILE VIEW -->
+    <div id="profile-overlay" class="hidden">
+        <button onclick="closeProfile()" style="width: 80px; margin-bottom: 20px;">Back</button>
+        <div style="text-align: center; position: relative;">
+            <div style="position: absolute; right: 0; font-size: 24px; cursor: pointer;" onclick="document.getElementById('opt-menu').classList.toggle('hidden')">⋮</div>
+            <div id="opt-menu" class="hidden" style="position: absolute; right: 0; top: 30px; background: #eee; text-align: left; padding: 10px; border-radius: 10px; z-index: 10;">
+                <div onclick="alert('Viewing...')">ကြည့်မယ်</div>
+                <hr>
+                <div onclick="alert('Changing...')">ပြောင်းမယ် (Emblem)</div>
+            </div>
+            <img src="https://flaticon.com" class="profile-img-big">
+            <h2 id="p-name">Username</h2>
+            <p id="p-bio" style="color: #777;">Hey there! I am using Connect.</p>
+            <hr>
+            <div style="text-align: left; padding: 10px;">
+                <p>Phone: <span id="p-phone">09...</span> 
+                   <select style="width: 100px; float: right; margin: 0; padding: 5px;">
+                       <option>Public</option><option>Fri Only</option><option>Only Me</option>
+                   </select>
+                </p>
+                <p>Theme: <input type="color" onchange="document.documentElement.style.setProperty('--main-color', this.value)" style="width: 50px; padding: 0; height: 30px;"></p>
+            </div>
+            <button onclick="logout()" style="background: #eb4d4b; margin-top: 50px;">Logout</button>
+        </div>
     </div>
 
     <script>
-        const messageArea = document.getElementById('message-area');
-        const msgInput = document.getElementById('msg-input');
+        let stream;
+        let mode = "user";
+        let capturedDataUrl = "";
 
-        // Restart ချလည်း စာမပျက်အောင် သိမ်းထားတာ ပြန်ခေါ်မယ်
+        // 1. Auth Logic
         window.onload = () => {
-            const savedMsgs = localStorage.getItem('chat_history');
-            if (savedMsgs) messageArea.innerHTML = savedMsgs;
-            messageArea.scrollTop = messageArea.scrollHeight;
-            
-            // App ထဲရောက်တာနဲ့ အပြင်မထွက်သွားအောင် သော့ခတ်မယ်
-            history.pushState(null, null, location.href);
+            const user = localStorage.getItem('social_user');
+            if(user) { fillData(JSON.parse(user)); showHome(); }
         };
 
-        // Browser Back နှိပ်ရင် တဆင့်ချင်း ထွက်ဖို့
-        window.onpopstate = function () {
-            const contactModal = document.getElementById('contact-modal');
-            if (contactModal.style.display === 'flex') {
-                contactModal.style.display = 'none';
-                history.pushState(null, null, location.href); // State ပြန်ဖြည့်မယ်
-            } else {
-                if(confirm("App မှ ထွက်မှာ သေချာသလား?")) {
-                    history.back();
-                } else {
-                    history.pushState(null, null, location.href);
-                }
-            }
-        };
+        function login() {
+            const data = {
+                name: document.getElementById('u-name').value,
+                phone: document.getElementById('u-phone').value,
+                pass: document.getElementById('u-pass').value
+            };
+            if(!data.name || !data.phone) return alert("Fill all info!");
+            localStorage.setItem('social_user', JSON.stringify(data));
+            fillData(data);
+            showHome();
+        }
 
-        function openContacts() {
-            document.getElementById('contact-modal').style.display = 'flex';
-            history.pushState(null, null, location.href); // Back တဆင့်ပြန်လာဖို့
+        function fillData(u) {
+            document.getElementById('p-name').innerText = u.name;
+            document.getElementById('p-phone').innerText = u.phone;
+        }
+
+        function showHome() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-main').classList.remove('hidden');
+        }
+
+        function logout() { localStorage.clear(); location.reload(); }
+
+        // 2. AI Chat
+        function aiReply() {
+            const input = document.getElementById('ai-input');
+            const box = document.getElementById('chat-box');
+            if(!input.value) return;
+            box.innerHTML += `<div><b>You:</b> ${input.value}</div>`;
+            setTimeout(() => {
+                box.innerHTML += `<div style="color:blue;"><b>AI:</b> Thinking about "${input.value}"... I am here to help!</div>`;
+                box.scrollTop = box.scrollHeight;
+            }, 800);
+            input.value = "";
+        }
+
+        // 3. Camera & Story Logic
+        async function startCamera() {
+            document.getElementById('camera-modal').classList.remove('hidden');
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode } });
+            document.getElementById('video-feed').srcObject = stream;
+        }
+
+        function stopCamera() {
+            if(stream) stream.getTracks().forEach(t => t.stop());
+            document.getElementById('camera-modal').classList.add('hidden');
+        }
+
+        function flipCamera() {
+            mode = (mode === "user") ? "environment" : "user";
+            stopCamera(); startCamera();
+        }
+
+        function takePhoto() {
+            const video = document.getElementById('video-feed');
+            const canvas = document.getElementById('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            capturedDataUrl = canvas.toDataURL('image/jpeg');
             
-            // Dummy Contacts (နမူနာ နံပါတ်များ)
-            const list = document.getElementById('contact-list');
-            list.innerHTML = "";
-            const dummy = [{n:'Kyaw Kyaw', p:'091234567'}, {n:'Su Su', p:'098765432'}];
-            dummy.forEach(c => {
-                const d = document.createElement('div');
-                d.className = 'contact-item';
-                d.innerHTML = `<b>${c.n}</b><br>${c.p}`;
-                d.onclick = () => { addMessage(`${c.n} ကို ရွေးလိုက်သည်`, 'sent'); goBack(); };
-                list.appendChild(d);
-            });
+            document.getElementById('captured-image').src = capturedDataUrl;
+            document.getElementById('camera-modal').classList.add('hidden');
+            document.getElementById('story-confirm').classList.remove('hidden');
+            stopCamera();
         }
 
-        function goBack() {
-            window.history.back(); // window.onpopstate ကနေ modal ကို ပိတ်ပေးလိမ့်မယ်
+        function cancelPost() {
+            document.getElementById('story-confirm').classList.add('hidden');
+            capturedDataUrl = "";
         }
 
-        function sendMessage() {
-            const text = msgInput.value.trim();
-            if (!text) return;
-            addMessage(text, 'sent');
-            msgInput.value = "";
-            setTimeout(() => addMessage("AI: ဟုတ်ကဲ့ပါဗျာ။", 'received'), 800);
+        function postStory() {
+            const privacy = document.getElementById('story-privacy').value;
+            const container = document.getElementById('active-stories');
+            
+            // Create Story Element
+            const div = document.createElement('div');
+            div.className = "story-item";
+            div.style.borderColor = "#00b894";
+            div.innerHTML = `<img src="${capturedDataUrl}" title="Privacy: ${privacy}">`;
+            container.prepend(div);
+
+            // 24 Hour Logic (Real 24hr = 86400000 ms)
+            // For Demo: we set 1 minute (60000 ms) to see it vanish
+            setTimeout(() => {
+                div.remove();
+                console.log("Story expired after 24 hours");
+            }, 86400000); 
+
+            alert(`Story posted as ${privacy}! It will disappear in 24 hours.`);
+            cancelPost();
         }
 
-        function addMessage(text, type) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `msg ${type}`;
-            msgDiv.innerText = text;
-            messageArea.appendChild(msgDiv);
-            messageArea.scrollTop = messageArea.scrollHeight;
-            localStorage.setItem('chat_history', messageArea.innerHTML);
-        }
+        // 4. Profile UI
+        function openProfile() { document.getElementById('profile-overlay').classList.remove('hidden'); }
+        function closeProfile() { document.getElementById('profile-overlay').classList.add('hidden'); }
     </script>
 </body>
 </html>
