@@ -5,204 +5,164 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connect App</title>
     <style>
-        :root {
-            --bg-color: #0f111a;
-            --card-bg: #1a1d29;
-            --primary-purple: #8e44ad;
-            --accent-green: #2ecc71;
-            --text-color: #ffffff;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background 0.3s;
-        }
-
-        /* Login & Screen Styles */
-        .screen { display: none; padding: 20px; min-height: 100vh; flex-direction: column; align-items: center; }
+        :root { --bg-color: #0f111a; --card-bg: #1a1d29; --primary-purple: #8e44ad; --text-color: #ffffff; }
+        body { margin: 0; font-family: sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: 0.3s; }
+        .screen { display: none; padding: 20px; min-height: 100vh; flex-direction: column; box-sizing: border-box; }
         .active { display: flex; }
+        
+        /* Header style based on Image 1 */
+        .home-header { display: flex; justify-content: flex-end; gap: 15px; padding: 10px 0; border-bottom: 1px solid #333; }
+        .header-icon { width: 40px; height: 40px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--primary-purple); }
 
-        .card {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 350px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+        /* Floating Button based on Image 1 */
+        .add-friend-btn { position: fixed; bottom: 30px; left: 20px; width: 50px; height: 50px; background: var(--primary-purple); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        input {
-            width: 90%;
-            padding: 12px;
-            margin: 10px 0;
-            background: #25293a;
-            border: 1px solid #333;
-            border-radius: 10px;
-            color: white;
-        }
+        /* Profile Layout based on Image 2 */
+        .profile-container { text-align: center; width: 100%; }
+        .profile-big-img { width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--primary-purple); margin: 0 auto 20px; overflow: hidden; }
+        .input-group { background: var(--card-bg); padding: 15px; border-radius: 15px; margin-bottom: 15px; text-align: left; }
+        
+        input, textarea { width: 100%; padding: 10px; margin-top: 5px; background: #25293a; border: 1px solid #444; border-radius: 8px; color: white; box-sizing: border-box; }
+        .theme-section { margin-top: 20px; }
+        .theme-circles { display: flex; justify-content: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+        .color-circle { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; }
 
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .btn-purple { background: linear-gradient(to right, #9d50bb, #6e48aa); color: white; }
-        .btn-green { background: #2ecc71; color: white; }
-
-        /* Story & Avatar Styles */
-        .avatar-selection { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
-        .bear-avatar { width: 50px; height: 50px; cursor: pointer; border-radius: 50%; border: 2px solid transparent; }
-        .bear-avatar.selected { border-color: var(--primary-purple); }
-
-        /* Main App Header */
-        .header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-        }
-
-        .settings-icon { font-size: 24px; cursor: pointer; }
-
-        /* Chat Bot Area */
-        .chatbot-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 60px;
-            height: 60px;
-            background: var(--primary-purple);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
+        .btn-logout { background: #e74c3c; color: white; margin-top: 30px; }
+        
+        /* Chat bot card */
+        .bot-card { background: var(--card-bg); padding: 15px; border-radius: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-<!-- 1. Login Screen -->
-<div id="login-screen" class="screen active">
-    <div class="card">
-        <h2 style="color: var(--primary-purple)">Get Started</h2>
-        <p>ဖုန်းနံပါတ်ဖြင့် တိုက်ရိုက်ဝင်ရောက်ပါ</p>
-        <input type="text" id="user-name" placeholder="သင့်အမည်">
-        <input type="text" id="phone-number" placeholder="09xxxxxxxxx">
-        <button class="btn btn-purple" onclick="showScreen('upload-screen')">Login ဝင်မည်</button>
+<!-- Home Screen (Image 1 Layout) -->
+<div id="home-screen" class="screen active">
+    <div class="home-header">
+        <div class="header-icon" onclick="showScreen('camera-screen')" title="Story">📷</div>
+        <div class="header-icon" onclick="showScreen('profile-screen')" title="Profile">👤</div>
     </div>
-</div>
-
-<!-- 2. Upload Photo & Bear Selection -->
-<div id="upload-screen" class="screen">
-    <div class="card">
-        <h2 style="color: var(--primary-purple)">Upload Photo</h2>
-        <div id="preview-circle" style="width: 100px; height: 100px; border: 3px solid var(--primary-purple); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
-            <span id="preview-text">Preview</span>
-        </div>
-        <p>ဝက်ဝံလေးများ ရွေးချယ်နိုင်သည်</p>
-        <div class="avatar-selection">
-            <img src="https://flaticon.com" class="bear-avatar" onclick="selectBear(this)">
-            <img src="https://flaticon.com" class="bear-avatar" onclick="selectBear(this)">
-            <img src="https://flaticon.com" class="bear-avatar" onclick="selectBear(this)">
-            <img src="https://flaticon.com" class="bear-avatar" onclick="selectBear(this)">
-            <img src="https://flaticon.com" class="bear-avatar" onclick="selectBear(this)">
-        </div>
-        <button class="btn btn-purple">Select Photo</button>
-        <button class="btn btn-green" onclick="showScreen('home-screen')">Done</button>
-        <p style="cursor:pointer; font-size: 14px;" onclick="showScreen('home-screen')">Skip (မတင်ဘဲကျော်မည်)</p>
-    </div>
-</div>
-
-<!-- 3. Home / Chat Box Screen -->
-<div id="home-screen" class="screen">
-    <div class="header">
-        <span class="settings-icon" onclick="showScreen('settings-screen')">⚙️</span>
-        <div style="display:flex; align-items: center; gap: 10px;">
-            <div style="border: 2px solid var(--primary-purple); border-radius: 50%; padding: 5px;">+ Story</div>
-            <div onclick="showScreen('profile-screen')" style="cursor: pointer;">Me</div>
-        </div>
-    </div>
-    <h3>CHAT BOX (စာပို့ရန်နေရာ)</h3>
-    <p style="margin-top: 50px; opacity: 0.5;">သူငယ်ချင်းစာရင်း မရှိသေးပါ။</p>
     
-    <div class="chatbot-btn">🤖</div>
+    <h2 style="margin-top: 20px;">Chats</h2>
+    <div class="bot-card" onclick="showScreen('bot-chat-screen')">
+        <div style="font-size: 30px;">🤖</div>
+        <div><b>AI Chat Bot</b><br><small>မင်္ဂလာပါ၊ စကားပြောရအောင်...</small></div>
+    </div>
+
+    <!-- Content/Friend Add Button (Bottom Left) -->
+    <div class="add-friend-btn" onclick="showScreen('add-friend-screen')">+</div>
 </div>
 
-<!-- 4. Settings Screen -->
-<div id="settings-screen" class="screen">
-    <div class="card">
-        <h2>Settings</h2>
-        <p>Theme အရောင်ပြောင်းရန်</p>
-        <input type="color" id="theme-color" onchange="changeTheme(this.value)" value="#0f111a" style="height: 50px; cursor: pointer;">
-        <button class="btn btn-purple" onclick="logout()">Log Out</button>
-        <button class="btn" onclick="showScreen('home-screen')">Back</button>
+<!-- Profile Screen (Image 2 Layout) -->
+<div id="profile-screen" class="screen">
+    <div style="margin-bottom: 15px; cursor: pointer;" onclick="showScreen('home-screen')">← Back</div>
+    
+    <div class="profile-container">
+        <div class="profile-big-img">
+            <img src="https://flaticon.com" style="width:100%" alt="Profile">
+        </div>
+
+        <div class="input-group">
+            <label>Bio</label>
+            <textarea placeholder="သင့်အကြောင်းရေးပါ..."></textarea>
+        </div>
+
+        <div class="input-group">
+            <label>Birthday</label>
+            <input type="date">
+        </div>
+
+        <div class="theme-section">
+            <p>Choose Theme Color</p>
+            <div class="theme-circles">
+                <div class="color-circle" style="background:#0f111a" onclick="changeTheme('#0f111a')"></div>
+                <div class="color-circle" style="background:#1a1a2e" onclick="changeTheme('#1a1a2e')"></div>
+                <div class="color-circle" style="background:#2d132c" onclick="changeTheme('#2d132c')"></div>
+                <div class="color-circle" style="background:#00203f" onclick="changeTheme('#00203f')"></div>
+                <div class="color-circle" style="background:#1e3932" onclick="changeTheme('#1e3932')"></div>
+                <div class="color-circle" style="background:#4a0e0e" onclick="changeTheme('#4a0e0e')"></div>
+            </div>
+        </div>
+
+        <button class="btn btn-logout" onclick="logout()">Log Out ထွက်မည်</button>
     </div>
 </div>
 
-<!-- 5. Profile Screen -->
-<div id="profile-screen" class="screen">
-    <div class="card">
-        <h2>My Profile</h2>
-        <input type="text" placeholder="Bio ရေးရန်">
-        <input type="date" placeholder="Age (မွေးနေ့)">
-        <button class="btn btn-purple">Save Profile</button>
-        <button class="btn" onclick="showScreen('home-screen')">Back</button>
+<!-- Camera/Story Screen -->
+<div id="camera-screen" class="screen" style="background: #000;">
+    <div style="color: white; margin-bottom: 20px; cursor: pointer;" onclick="showScreen('home-screen')">← Close</div>
+    <div style="flex-grow: 1; border: 2px dashed #444; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+        Camera View
+    </div>
+    <div style="display: flex; justify-content: space-around; align-items: center; padding: 40px 0;">
+        <div style="font-size: 30px; cursor: pointer;" onclick="alert('Album ပွင့်လာပါပြီ')">🖼️</div>
+        <div style="width: 70px; height: 70px; background: white; border-radius: 50%; border: 5px solid #444;" onclick="alert('ပုံရိုက်လိုက်ပါပြီ')"></div>
+        <div style="width: 30px;"></div>
+    </div>
+</div>
+
+<!-- Add Friend Screen -->
+<div id="add-friend-screen" class="screen">
+    <div style="margin-bottom: 20px; cursor: pointer;" onclick="showScreen('home-screen')">← Back</div>
+    <h2>ရှာဖွေပြီး Friend အပ်ရန်</h2>
+    <input type="text" placeholder="ဖုန်းနံပါတ်ဖြင့် ရှာပါ...">
+    <h4 style="margin-top: 30px;">ဖုန်းထဲမှ Contacts များ</h4>
+    <div style="background: var(--card-bg); padding: 10px; border-radius: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #333;">
+            <span>Mg Mg (09123456)</span>
+            <button class="btn-purple" style="padding: 5px 15px; border-radius: 5px; border: none; cursor: pointer;" onclick="alert('Add လုပ်ပြီးပါပြီ')">Add</button>
+        </div>
+    </div>
+</div>
+
+<!-- Bot Chat Screen -->
+<div id="bot-chat-screen" class="screen">
+    <div style="margin-bottom: 15px; cursor: pointer;" onclick="showScreen('home-screen')">← Back</div>
+    <div id="chat-msgs" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+        <div style="background: #333; padding: 10px; border-radius: 15px; align-self: flex-start; max-width: 80%;">မင်္ဂလာပါ! ဘာကူညီပေးရမလဲ။</div>
+    </div>
+    <div style="display: flex; gap: 10px; padding-top: 10px;">
+        <input type="text" id="chat-input" placeholder="စာရိုက်ပါ...">
+        <button class="btn btn-purple" style="width: auto; margin: 0;" onclick="sendMessage()">Send</button>
     </div>
 </div>
 
 <script>
-    // Screen Navigation
-    function showScreen(screenId) {
+    function showScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
-        
-        // Save state for persistence
-        if(screenId !== 'login-screen') {
-            localStorage.setItem('isLoggedIn', 'true');
-        }
+        document.getElementById(id).classList.add('active');
     }
 
-    // Bear Selection
-    function selectBear(element) {
-        document.querySelectorAll('.bear-avatar').forEach(b => b.classList.remove('selected'));
-        element.classList.add('selected');
-        const preview = document.getElementById('preview-circle');
-        preview.innerHTML = `<img src="${element.src}" style="width:100%; border-radius:50%;">`;
-    }
-
-    // Theme Change
     function changeTheme(color) {
         document.body.style.backgroundColor = color;
         localStorage.setItem('themeColor', color);
     }
 
-    // Logout
-    function logout() {
-        localStorage.removeItem('isLoggedIn');
-        showScreen('login-screen');
+    function sendMessage() {
+        let input = document.getElementById('chat-input');
+        if(!input.value) return;
+        let box = document.getElementById('chat-msgs');
+        box.innerHTML += `<div style="background: var(--primary-purple); padding: 10px; border-radius: 15px; align-self: flex-end; max-width: 80%;">${input.value}</div>`;
+        
+        setTimeout(() => {
+            box.innerHTML += `<div style="background: #333; padding: 10px; border-radius: 15px; align-self: flex-start; max-width: 80%;">"<b>${input.value}</b>" အတွက် ကျေးဇူးတင်ပါတယ်!</div>`;
+            box.scrollTop = box.scrollHeight;
+        }, 800);
+        input.value = "";
     }
 
-    // Persistence Check on Load
+    function logout() {
+        if(confirm("အကောင့်မှ ထွက်မှာ သေချာပါသလား?")) {
+            localStorage.clear();
+            alert("Log Out ထွက်ပြီးပါပြီ။");
+            location.reload();
+        }
+    }
+
     window.onload = () => {
-        if(localStorage.getItem('isLoggedIn') === 'true') {
-            showScreen('home-screen');
-        }
-        if(localStorage.getItem('themeColor')) {
-            const savedColor = localStorage.getItem('themeColor');
-            document.body.style.backgroundColor = savedColor;
-            document.getElementById('theme-color').value = savedColor;
-        }
+        const savedColor = localStorage.getItem('themeColor');
+        if(savedColor) document.body.style.backgroundColor = savedColor;
     };
 </script>
 
