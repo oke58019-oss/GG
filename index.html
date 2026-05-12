@@ -1,181 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="my">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Connect Pro - Dual Camera Mode</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Myanmar Chat App</title>
     <style>
-        :root { --primary-color: #8e44ad; --bg-color: #0f111a; --card-bg: #1a1d29; --text-color: #ffffff; --accent-green: #2ecc71; }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow: hidden; }
-        .screen { display: none; height: 100vh; flex-direction: column; width: 100%; box-sizing: border-box; }
-        .active { display: flex; }
+        :root { --primary-color: #075e54; --app-bg: #f0f2f5; }
+        body { font-family: sans-serif; margin: 0; background: var(--app-bg); transition: 0.3s; }
         
-        /* Layouts */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #333; background: var(--bg-color); }
-        .container { padding: 20px; overflow-y: auto; flex-grow: 1; }
-        .item-card { background: var(--card-bg); padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
-        .avatar { width: 45px; height: 45px; border-radius: 50%; background: #444; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; }
-        
-        /* Story Section */
-        .story-container { display: flex; gap: 15px; padding: 15px 20px; overflow-x: auto; border-bottom: 1px solid #222; }
-        .story-circle { min-width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--accent-green); display: flex; align-items: center; justify-content: center; font-size: 25px; cursor: pointer; }
+        /* Login Screen */
+        #login-screen { position: fixed; inset: 0; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+        .input-group { margin: 10px; width: 80%; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn-login { width: 80%; padding: 12px; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
-        /* Chat Bar */
-        .chat-input-bar { display: flex; align-items: center; gap: 10px; padding: 10px 15px; background: var(--card-bg); border-top: 1px solid #333; }
-        .chat-input-bar input { flex-grow: 1; background: #25293a; border: none; padding: 12px; border-radius: 20px; color: white; outline: none; }
+        /* App Layout */
+        header { background: var(--primary-color); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .profile-circle { width: 35px; height: 35px; border-radius: 50%; background: #ccc; cursor: pointer; border: 2px solid white; object-fit: cover; }
 
-        /* Overlays (Full Screen Camera/Call) */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        video { width: 100%; height: 100%; object-fit: cover; }
-        .cam-controls { position: absolute; bottom: 50px; display: flex; gap: 30px; align-items: center; z-index: 1100; }
-        .shutter { width: 70px; height: 70px; border-radius: 50%; border: 5px solid white; cursor: pointer; }
-        .switch-btn { font-size: 35px; color: white; cursor: pointer; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 50%; }
+        /* Profile Panel */
+        #profile-panel { display: none; position: fixed; inset: 0; background: white; z-index: 500; padding: 20px; overflow-y: auto; }
+        .three-dots { float: right; font-size: 24px; cursor: pointer; padding: 5px; }
+        .logout-btn { margin-top: 30px; background: #ff4444; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; }
+        .theme-apply-btn { margin-top: 10px; background: var(--primary-color); color: white; padding: 8px 20px; border: none; border-radius: 5px; cursor: pointer; }
 
-        .btn-purple { background: var(--primary-color); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: bold; }
+        /* Others */
+        .story-section { padding: 15px; background: white; display: flex; border-bottom: 1px solid #eee; }
+        .story-add { width: 60px; height: 60px; border-radius: 50%; border: 3px solid #25d366; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<!-- Login Screen -->
-<div id="login-screen" class="screen active">
-    <div class="container" style="text-align:center; display:flex; flex-direction:column; justify-content:center;">
-        <h1>Connect</h1>
-        <input type="tel" id="login-phone" style="width:100%; padding:15px; border-radius:10px; border:none; background:#25293a; color:white; margin-bottom:15px;" placeholder="Phone Number (09...)">
-        <button class="btn-purple" onclick="handleLogin()">Login</button>
+    <!-- Login Screen -->
+    <div id="login-screen">
+        <h2 style="color: var(--primary-color)">Welcome Chat</h2>
+        <div class="input-group"><input type="text" id="login-name" placeholder="အမည် (User Name)"></div>
+        <div class="input-group"><input type="tel" id="login-phone" placeholder="ဖုန်းနံပါတ်"></div>
+        <div class="input-group"><input type="password" id="login-pass" placeholder="စကားဝှက် (Password)"></div>
+        <button class="btn-login" onclick="handleLogin()">ဝင်မည်</button>
     </div>
-</div>
 
-<!-- Home Screen -->
-<div id="home-screen" class="screen">
-    <div class="header">
-        <span style="font-weight:bold;">Connect</span>
-        <div class="avatar" style="width:35px; height:35px; font-size:18px;" onclick="showScreen('profile-screen')">👤</div>
-    </div>
-    <div class="story-container">
-        <div class="story-circle" style="border: 2px dashed #555;" onclick="openCamera('story')">+</div>
-        <div class="story-circle">👦</div>
-        <div class="story-circle">👧</div>
-    </div>
-    <div class="container" id="chat-list">
-        <!-- Chats will load here -->
-    </div>
-</div>
+    <!-- Main App Content -->
+    <div id="main-app" style="display:none;">
+        <header id="app-header">
+            <span>Messenger</span>
+            <div class="profile-circle" onclick="toggleProfile()"></div>
+        </header>
 
-<!-- Chat Window -->
-<div id="chat-window" class="screen">
-    <div class="header">
-        <div onclick="showScreen('home-screen')">←</div>
-        <div id="chat-user-name" style="font-weight:bold;">User</div>
-        <div style="display:flex; gap:15px;">
-            <span onclick="alert('Calling...')">📞</span>
-            <span onclick="openCamera('vc')">📹</span>
+        <div class="story-section">
+            <div class="story-add" onclick="alert('Camera ဖွင့်နေသည်...')"></div>
+        </div>
+
+        <div style="padding: 20px; text-align: center; color: #888;">
+            သူငယ်ချင်းအသစ်များထည့်ရန် + ကိုနှိပ်ပါ
         </div>
     </div>
-    <div class="container" id="chat-messages" style="background:#0b0d14;"></div>
-    <div class="chat-input-bar">
-        <span style="font-size:20px; cursor:pointer;">🖼️</span>
-        <input type="text" id="msg-input" placeholder="Message...">
-        <button style="background:none; border:none; color:var(--primary-color); font-weight:bold;" onclick="sendMessage()">Send</button>
+
+    <!-- Profile Panel -->
+    <div id="profile-panel">
+        <span onclick="toggleProfile()" style="cursor:pointer; font-size: 18px;">⬅ နောက်သို့</span>
+        <span class="three-dots" onclick="showOptions()">⋮</span>
+        
+        <center style="margin-top: 20px;">
+            <div class="profile-circle" style="width:100px; height:100px;"></div>
+            <h3 id="prof-name-disp">User Name</h3>
+            <p id="prof-bio">Bio: Happy Coding!</p>
+            <p id="prof-phone-disp">Phone: 09xxxxxxx</p>
+            
+            <div style="margin: 20px 0; text-align: left; width: 80%;">
+                <label>ဖုန်းနံပါတ်မြင်နိုင်သူ:</label>
+                <select style="width: 100%; padding: 8px; margin-top: 5px;">
+                    <option>Only Me</option>
+                    <option>Friends Only</option>
+                    <option>Public</option>
+                </select>
+            </div>
+
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; width: 80%;">
+                <label>Theme အရောင်ရွေးရန်:</label><br><br>
+                <input type="color" id="theme-color-picker" style="width: 50px; height: 50px; cursor: pointer;">
+                <br>
+                <button class="theme-apply-btn" onclick="applyTheme()">တပ်ဆင်မည်</button>
+            </div>
+
+            <button class="logout-btn" onclick="handleLogout()">Log Out ထွက်မည်</button>
+        </center>
     </div>
-</div>
 
-<!-- Camera Overlay (Selfie/Back Switching) -->
-<div id="camera-overlay" class="overlay">
-    <video id="video-preview" autoplay playsinline></video>
-    <div class="cam-controls">
-        <!-- Album/Gallery -->
-        <span style="font-size:30px; cursor:pointer;" onclick="alert('Open Gallery...')">🖼️</span>
-        
-        <!-- Shutter Button -->
-        <div class="shutter" onclick="closeOverlay()"></div>
-        
-        <!-- Camera Switch Button (Selfie vs Back) -->
-        <div class="switch-btn" onclick="switchCamera()">🔄</div>
-        
-        <!-- Exit -->
-        <span style="font-size:30px; cursor:pointer; position:absolute; top:-500px; right: 0;" onclick="closeOverlay()">✕</span>
-    </div>
-    <h3 id="cam-type" style="position:absolute; top:20px; color:white;">Story Mode</h3>
-</div>
+    <script>
+        // ဒေတာများကို မှတ်ထားရန် Variable များ
+        let registeredUser = null;
 
-<script>
-    let currentStream = null;
-    let useFrontCamera = true; // Default as Selfie
-    let currentMode = 'story';
+        function handleLogin() {
+            const name = document.getElementById('login-name').value;
+            const phone = document.getElementById('login-phone').value;
+            const pass = document.getElementById('login-pass').value;
 
-    function showScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
+            if(!name || !phone || !pass) {
+                alert("အချက်အလက်အားလုံး ပြည့်စုံအောင် ဖြည့်ပါ");
+                return;
+            }
 
-    function handleLogin() {
-        if(document.getElementById('login-phone').value) {
-            showScreen('home-screen');
-            loadChats();
-        }
-    }
-
-    function loadChats() {
-        document.getElementById('chat-list').innerHTML = `
-            <div class="item-card" onclick="openChat('Welcome Bot')">
-                <div class="avatar">🤖</div>
-                <div style="flex-grow:1;"><b>Welcome Bot</b><br><small>Hi there!</small></div>
-            </div>`;
-    }
-
-    function openChat(name) {
-        document.getElementById('chat-user-name').innerText = name;
-        showScreen('chat-window');
-    }
-
-    function openCamera(mode) {
-        currentMode = mode;
-        document.getElementById('cam-type').innerText = mode === 'story' ? "Story Mode" : "Video Call";
-        document.getElementById('camera-overlay').style.display = 'flex';
-        startStream();
-    }
-
-    function startStream() {
-        if (currentStream) {
-            currentStream.getTracks().forEach(track => track.stop());
+            // ပထမဆုံးအကြိမ်ဝင်တာဆိုရင် User ကို Register လုပ်လိုက်မယ်
+            if (!registeredUser) {
+                registeredUser = { name, phone, pass };
+                enterApp();
+            } else {
+                // နောက်တစ်ကြိမ်ပြန်ဝင်ရင် ဖုန်းနဲ့ Password ကို စစ်မယ်
+                if (phone === registeredUser.phone && pass === registeredUser.pass) {
+                    enterApp();
+                } else {
+                    alert("ဖုန်းနံပါတ် သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်။");
+                }
+            }
         }
 
-        const constraints = {
-            video: { facingMode: (useFrontCamera ? "user" : "environment") }
-        };
-
-        navigator.mediaDevices.getUserMedia(constraints)
-            .then(stream => {
-                currentStream = stream;
-                document.getElementById('video-preview').srcObject = stream;
-            })
-            .catch(err => alert("Camera error: " + err));
-    }
-
-    function switchCamera() {
-        useFrontCamera = !useFrontCamera; // Toggle Selfie/Back
-        startStream(); // Restart stream with new camera
-    }
-
-    function closeOverlay() {
-        document.getElementById('camera-overlay').style.display = 'none';
-        if (currentStream) {
-            currentStream.getTracks().forEach(track => track.stop());
+        function enterApp() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            document.getElementById('prof-name-disp').innerText = registeredUser.name;
+            document.getElementById('prof-phone-disp').innerText = "Phone: " + registeredUser.phone;
         }
-    }
 
-    function sendMessage() {
-        let inp = document.getElementById('msg-input');
-        if(inp.value) {
-            let m = document.createElement('div');
-            m.style.padding = "10px"; m.style.background = "var(--primary-color)";
-            m.style.alignSelf = "flex-end"; m.style.borderRadius = "10px";
-            m.style.margin = "5px"; m.innerText = inp.value;
-            document.getElementById('chat-messages').appendChild(m);
-            inp.value = "";
+        function handleLogout() {
+            if(confirm("အကောင့်ထဲမှ ထွက်မှာ သေချာသလား?")) {
+                document.getElementById('main-app').style.display = 'none';
+                document.getElementById('profile-panel').style.display = 'none';
+                document.getElementById('login-screen').style.display = 'flex';
+                // Password ကွက်လပ်ကို ရှင်းထုတ်လိုက်မယ်
+                document.getElementById('login-pass').value = "";
+            }
         }
-    }
-</script>
 
+        function toggleProfile() {
+            const panel = document.getElementById('profile-panel');
+            panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function applyTheme() {
+            const selectedColor = document.getElementById('theme-color-picker').value;
+            // Header နဲ့ ခလုတ်တွေ အရောင်ပြောင်းမယ်
+            document.documentElement.style.setProperty('--primary-color', selectedColor);
+            // Background ကိုလည်း အရောင်ဖျော့ဖျော့လေး လိုက်ပြောင်းပေးမယ်
+            document.body.style.backgroundColor = selectedColor + "11"; 
+            alert("Theme ကို အောင်မြင်စွာ တပ်ဆင်လိုက်ပါပြီ။");
+        }
+
+        function showOptions() {
+            const choice = confirm("Profile ပုံ ကြည့်မလား (OK) ပြောင်းမလား (Cancel)?");
+            if(choice) alert("ပုံကို ပြသနေသည်...");
+            else alert("Album ထဲမှ ပုံရွေးချယ်ရန် ပြင်ဆင်နေသည်...");
+        }
+    </script>
 </body>
 </html>
