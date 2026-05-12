@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connect App</title>
-    <!-- Icon များအသုံးပြုရန် Font Awesome CSS ချိတ်ဆက်ခြင်း -->
+    <title>Super Connect App</title>
+    <!-- Font Awesome Icons CSS -->
     <link rel="stylesheet" href="cloudflare.com">
     <style>
         * {
@@ -14,350 +14,499 @@
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
+        :root {
+            --bg-color: #0b0f19;
+            --panel-color: #111827;
+            --card-color: #1f2937;
+            --accent-color: linear-gradient(135deg, #6366f1, #a855f7);
+            --text-color: #f3f4f6;
+        }
+
         body {
-            background-color: #0b0f19;
-            color: #f3f4f6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             display: flex;
-            flex-direction: column;
             height: 100vh;
             overflow: hidden;
+            transition: background 0.3s ease;
         }
 
-        /* ဆန်းသစ်သော အပေါ်ပိုင်း Header ဒီဇိုင်း */
-        .app-bar {
-            background: linear-gradient(135deg, #1e1b4b, #311042);
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        /* ======= (၁) LOGIN SCREEN ======= */
+        #loginScreen {
             position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 100;
-        }
-
-        .profile-section {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .user-avatar {
-            width: 46px;
-            height: 46px;
-            background: linear-gradient(45deg, #6366f1, #a855f7);
-            border-radius: 16px; /* ထောင့်မှန်စတုဂံအဝိုင်းပုံစံ */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 20px;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-
-        .user-status-text h3 {
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .pulse-online {
-            font-size: 12px;
-            color: #10b981;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .pulse-online::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background-color: #10b981;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        /* ဖုန်းခေါ်ဆိုမှု ခလုတ်များ */
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-        }
-
-        .icon-btn {
-            width: 42px;
-            height: 42px;
-            background-color: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #e5e7eb;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .icon-btn:hover {
-            background-color: #6366f1;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        /* စာတိုများပြသမည့် နေရာလွတ် */
-        .chat-view {
-            flex: 1;
-            padding: 95px 20px 85px 20px;
-            overflow-y: auto;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0b0f19;
+            z-index: 999;
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            background-color: #0b0f19;
-        }
-
-        .bubble {
-            max-width: 70%;
-            padding: 12px 16px;
-            border-radius: 18px;
-            font-size: 15px;
-            line-height: 1.5;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        .bubble.friend {
-            background-color: #1f2937;
-            color: #f3f4f6;
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-
-        .bubble.me {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        /* အောက်ခြေစာရိုက်ကွက် */
-        .bottom-bar {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #111827;
-            padding: 14px 20px;
-            display: flex;
             align-items: center;
-            gap: 14px;
-            border-top: 1px solid #1f2937;
+            justify-content: center;
+            padding: 20px;
         }
 
-        .message-input {
-            flex: 1;
+        .login-box {
+            background-color: #111827;
+            padding: 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .login-box h2 {
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 5px;
+        }
+
+        .login-input {
+            width: 100%;
             background-color: #1f2937;
             border: 1px solid #374151;
+            padding: 12px;
+            border-radius: 12px;
+            color: white;
             outline: none;
-            padding: 12px 18px;
-            border-radius: 14px;
-            color: white;
             font-size: 15px;
-            transition: border-color 0.2s;
         }
 
-        .message-input:focus {
-            border-color: #6366f1;
+        /* ======= APP NAVIGATION SIDEBAR ======= */
+        .sidebar {
+            width: 75px;
+            background-color: var(--panel-color);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 20px;
         }
 
-        .send-message-btn {
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            color: white;
-            border: none;
-            width: 45px;
-            height: 45px;
+        .nav-item {
+            width: 48px;
+            height: 48px;
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
+            color: #9ca3af;
             font-size: 18px;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            cursor: pointer;
             transition: all 0.2s;
         }
 
-        .send-message-btn:hover {
-            transform: scale(1.05);
+        .nav-item.active, .nav-item:hover {
+            background: var(--accent-color);
+            color: white;
         }
 
-        /* ကောခေါ်ဆိုမှုမျက်နှာပြင် (Overlay) */
-        .calling-screen {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, #1e1b4b 0%, #030712 100%);
-            z-index: 200;
+        /* ======= MAIN CONTENT SECTION ======= */
+        .content-container {
+            flex: 1;
+            display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 60px 20px;
+            position: relative;
         }
 
-        .calling-info {
-            text-align: center;
-            margin-top: 40px;
+        .app-view {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+            padding: 20px;
+            overflow-y: auto;
         }
 
-        .calling-avatar {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(45deg, #6366f1, #a855f7);
-            border-radius: 32px;
+        .app-view.active {
+            display: flex;
+        }
+
+        .view-title {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        /* PROFILE SECTION IN HOME */
+        .my-profile-card {
+            background-color: var(--panel-color);
+            padding: 15px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            margin: 0 auto 20px auto;
-            box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
-        }
-
-        .call-type {
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .calling-status {
-            color: #9ca3af;
-            font-size: 16px;
-            animation: pulseText 1.5s infinite;
-        }
-
-        .controls-row {
-            display: flex;
-            gap: 30px;
+            gap: 15px;
             margin-bottom: 20px;
         }
 
-        .control-circle {
-            width: 65px;
-            height: 65px;
+        .profile-avatar-container {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+
+        .my-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            object-fit: cover;
+            background: #374151;
+        }
+
+        .upload-icon-btn {
+            position: absolute;
+            bottom: -5px; right: -5px;
+            background: var(--accent-color);
+            width: 22px; height: 22px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            cursor: pointer;
-            border: none;
-            color: white;
-            transition: transform 0.2s;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; cursor: pointer; color: white;
         }
 
-        .control-circle:hover {
-            transform: scale(1.1);
+        /* STORIES */
+        .story-section {
+            display: flex; gap: 12px;
+            overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px;
         }
 
-        .end-call { background-color: #ef4444; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4); }
-        .answer-call { background-color: #10b981; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); }
-
-        @keyframes pulseText {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+        .story-card {
+            min-width: 85px; height: 130px;
+            background-color: var(--card-color);
+            border-radius: 16px; display: flex;
+            flex-direction: column; justify-content: flex-end;
+            padding: 10px; font-size: 11px; position: relative;
         }
+
+        .story-card.active-story { border: 2px solid #a855f7; }
+
+        .create-story-box {
+            background-color: var(--panel-color);
+            padding: 15px; border-radius: 18px;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+
+        /* CHATS & PEOPLE LIST */
+        .person-card {
+            background-color: var(--panel-color);
+            padding: 12px 15px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .person-info { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+
+        .p-avatar {
+            width: 42px; height: 42px;
+            background: #4b5563; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; font-weight: bold;
+        }
+
+        .action-btn {
+            background: var(--accent-color);
+            color: white; border: none; padding: 8px 14px;
+            border-radius: 10px; cursor: pointer; font-size: 13px;
+        }
+
+        .action-btn.added { background: #374151; color: #9ca3af; }
+
+        /* CHAT BOX OVERLAY */
+        .chat-overlay {
+            display: none; position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            flex-direction: column; z-index: 150;
+        }
+
+        .chat-header {
+            background-color: var(--panel-color);
+            padding: 15px; display: flex;
+            align-items: center; justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .chat-body { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+
+        .msg-bubble { max-width: 70%; padding: 10px 14px; border-radius: 14px; font-size: 14px; }
+
+        .msg-bubble.incoming { background-color: var(--card-color); align-self: flex-start; border-bottom-left-radius: 4px; }
+
+        .msg-bubble.outgoing { background: var(--accent-color); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+
+        .chat-footer {
+            background-color: var(--panel-color);
+            padding: 12px; display: flex; align-items: center; gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1; background-color: var(--card-color);
+            border: 1px solid #374151; padding: 10px 15px;
+            border-radius: 12px; color: white; outline: none;
+        }
+
+        /* BACKGROUND SETTING THEMES */
+        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
+
+        .theme-option {
+            padding: 20px; border-radius: 14px; cursor: pointer;
+            text-align: center; font-weight: 500; font-size: 14px;
+            border: 2px solid transparent;
+        }
+
+        .theme-option.selected { border-color: #ffffff; }
     </style>
 </head>
 <body>
 
-    <!-- Top AppBar -->
-    <div class="app-bar">
-        <div class="profile-section">
-            <div class="user-avatar">M</div>
-            <div class="user-status-text">
-                <h3>My Friend</h3>
-                <div class="pulse-online">Active Now</div>
+    <!-- ======= (၁) PHONE LOGIN WINDOW ======= -->
+    <div id="loginScreen">
+        <div class="login-box">
+            <h2>Get Started</h2>
+            <p style="color: #9ca3af; font-size: 13px; margin-bottom: 20px;">ဘယ်ဖုန်းနံပါတ်နဲ့မဆို အိုင်ဒီကုဒ်မလိုဘဲ တိုက်ရိုက်ဝင်နိုင်ပါသည်</p>
+            
+            <div class="input-group">
+                <label>Name</label>
+                <input type="text" id="loginName" class="login-input" placeholder="သင့်အမည် ရိုက်ထည့်ပါ">
+            </div>
+            
+            <div class="input-group">
+                <label>Phone Number</label>
+                <input type="tel" id="loginPhone" class="login-input" placeholder="09xxxxxxxxx">
+            </div>
+            
+            <button class="action-btn" onclick="handleLogin()" style="width: 100%; padding: 12px; font-size: 15px; margin-top: 10px;">Login ဝင်မည်</button>
+        </div>
+    </div>
+
+    <!-- MAIN APP SIDEBAR -->
+    <div class="sidebar">
+        <div class="nav-item active" onclick="switchView('homeView', this)"><i class="fas fa-home"></i></div>
+        <div class="nav-item" onclick="switchView('chatView', this)"><i class="fas fa-comment-dots"></i></div>
+        <div class="nav-item" onclick="switchView('peopleView', this)"><i class="fas fa-user-plus"></i></div>
+        <div class="nav-item" onclick="switchView('settingsView', this)"><i class="fas fa-cog"></i></div>
+    </div>
+
+    <!-- MAIN PANEL -->
+    <div class="content-container">
+
+        <!-- VIEW 1: HOME & STORY -->
+        <div id="homeView" class="app-view active">
+            <div class="my-profile-card">
+                <div class="profile-avatar-container">
+                    <!-- ပုံသေ default ပရိုဖိုင်ပုံစံ -->
+                    <img id="userAvatarDisplay" class="my-avatar" src="unsplash.com" alt="Avatar">
+                    <label class="upload-icon-btn" for="avatarUploadInput">
+                        <i class="fas fa-camera"></i>
+                    </label>
+                    <!-- ဖုန်းထဲမှ Camera သို့မဟုတ် Album ရွေးရန် Input -->
+                    <input type="file" id="avatarUploadInput" accept="image/*" style="display: none;" onchange="previewAvatar(event)">
+                </div>
+                <div>
+                    <h3 id="displayProfileName">User Name</h3>
+                    <p id="displayProfilePhone" style="font-size: 12px; color: #9ca3af;">09xxxxxxxxx</p>
+                </div>
+            </div>
+
+            <h3 class="view-title">Stories</h3>
+            <div class="story-section" id="storiesContainer">
+                <div class="story-card active-story">
+                    <p style="font-size: 12px; font-weight:600;">Suzi</p>
+                </div>
+            </div>
+
+            <div class="create-story-box">
+                <h4>Share a Story Today</h4>
+                <input type="text" id="storyText" class="login-input" placeholder="What is on your mind?">
+                <button class="action-btn" onclick="postStory()" style="align-self: flex-end;">Share Story</button>
             </div>
         </div>
-        <div class="action-buttons">
-            <button class="icon-btn" onclick="openCallScreen('Audio Call')" title="Audio Call">
-                <i class="fas fa-phone-alt"></i>
-            </button>
-            <button class="icon-btn" onclick="openCallScreen('Video Call')" title="Video Call">
-                <i class="fas fa-video"></i>
-            </button>
-        </div>
-    </div>
 
-    <!-- Chat Area -->
-    <div class="chat-view" id="chatView">
-        <div class="bubble friend">ဟေး... နေကောင်းလား။ App ဒီဇိုင်းသစ်လေးက မိုက်တယ်နော်။</div>
-        <div class="bubble me">ဟုတ်တယ်၊ ဇယားတွေမရှုပ်တော့ဘဲ အမြင်ဆန်းသွားအောင် ပြင်လိုက်တာ။</div>
-    </div>
-
-    <!-- Message Input Bar -->
-    <div class="bottom-bar">
-        <input type="text" class="message-input" id="msgInput" placeholder="Type your message...">
-        <button class="send-message-btn" onclick="sendNewMessage()">
-            <i class="fas fa-paper-plane"></i>
-        </button>
-    </div>
-
-    <!-- Calling Screen Overlay -->
-    <div class="calling-screen" id="callingScreen">
-        <div class="calling-info">
-            <div class="calling-avatar">M</div>
-            <h2 class="call-type" id="callTypeLabel">Audio Call</h2>
-            <div class="calling-status">Calling...</div>
+        <!-- VIEW 2: CHAT BOX -->
+        <div id="chatView" class="app-view">
+            <h3 class="view-title">Chat Box</h3>
+            <div id="friendsChatList">
+                <p style="color: #6b7280; font-size: 14px;">သူငယ်ချင်းစာရင်း မရှိသေးပါ။</p>
+            </div>
         </div>
-        <div class="controls-row">
-            <button class="control-circle end-call" onclick="closeCallScreen()">
-                <i class="fas fa-phone-slash"></i>
-            </button>
-            <button class="control-circle answer-call" onclick="alert('ခေါ်ဆိုမှုကို လက်ခံလိုက်ပါပြီ')">
-                <i class="fas fa-phone"></i>
-            </button>
+
+        <!-- VIEW 3: ADD FRIENDS -->
+        <div id="peopleView" class="app-view">
+            <h3 class="view-title">Add Friends</h3>
+            <div class="person-card">
+                <div class="person-info">
+                    <div class="p-avatar" style="background-color: #ec4899;">M</div>
+                    <h4>Mya Mya</h4>
+                </div>
+                <button class="action-btn" onclick="addFriendAction('Mya Mya', 'M', this)">Add Friend</button>
+            </div>
+            <div class="person-card">
+                <div class="person-info">
+                    <div class="p-avatar" style="background-color: #10b981;">K</div>
+                    <h4>Kyaw Kyaw</h4>
+                </div>
+                <button class="action-btn" onclick="addFriendAction('Kyaw Kyaw', 'K', this)">Add Friend</button>
+            </div>
         </div>
+
+        <!-- VIEW 4: SETTINGS & BACKGROUND -->
+        <div id="settingsView" class="app-view">
+            <h3 class="view-title">Background Settings</h3>
+            <p style="color: #9ca3af; font-size: 14px;">App ၏ နောက်ခံအရောင်ကို စိတ်ကြိုက်ပြောင်းလဲပါ-</p>
+            <div class="theme-grid">
+                <div class="theme-option selected" style="background-color: #0b0f19;" onclick="changeTheme('#0b0f19', '#111827', '#1f2937', this)">Midnight Dark</div>
+                <div class="theme-option" style="background-color: #0f172a;" onclick="changeTheme('#0f172a', '#1e293b', '#334155', this)">Deep Ocean</div>
+                <div class="theme-option" style="background-color: #1c1917;" onclick="changeTheme('#1c1917', '#292524', '#44403c', this)">Charcoal Stone</div>
+                <div class="theme-option" style="background-color: #581c87;" onclick="changeTheme('#581c87', '#6b21a8', '#7e22ce', this)">Royal Purple</div>
+            </div>
+        </div>
+
+        <!-- PRIVATE CHAT WINDOW OVERLAY (စာပို့၊ ဖုန်းခေါ်၊ VC စုံလင်စွာပါဝင်) -->
+        <div class="chat-overlay" id="chatOverlay">
+            <div class="chat-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-arrow-left" style="cursor: pointer; color: #9ca3af;" onclick="closeChatWindow()"></i>
+                    <div class="p-avatar" id="activeChatAvatar">?</div>
+                    <h4 id="activeChatName">Name</h4>
+                </div>
+                <div style="display: flex; gap: 18px; font-size: 18px; color: #9ca3af; cursor: pointer;">
+                    <i class="fas fa-phone-alt" onclick="alert('ဖုန်းခေါ်ဆိုနေပါသည်...')"></i>
+                    <i class="fas fa-video" onclick="alert('ဗီဒီယိုကော (VC) ခေါ်ဆိုနေပါသည်...')"></i>
+                </div>
+            </div>
+            <div class="chat-body" id="chatBody">
+                <div class="msg-bubble incoming">မင်္ဂလာပါ! စာပို့ပြီး စကားစပြောနိုင်ပါပြီ။</div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Type a message...">
+                <button class="send-message-btn" onclick="sendChat()" style="background: var(--accent-color); border:none; width:40px; height:40px; border-radius:10px; color:white; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // စာသားအသစ် ပို့ရန် လုပ်ဆောင်ချက်
-        function sendNewMessage() {
-            const textInput = document.getElementById('msgInput');
-            const chatView = document.getElementById('chatView');
+        let myFriends = [];
+
+        // (၁) အကောင့်ဝင်ခြင်းစနစ်
+        function handleLogin() {
+            const name = document.getElementById('loginName').value.trim();
+            const phone = document.getElementById('loginPhone').value.trim();
+
+            if(name === "" || phone === "") {
+                alert("အမည်နှင့် ဖုန်းနံပါတ်ကို ပြည့်စုံစွာ ဖြည့်သွင်းပေးပါ။");
+                return;
+            }
+
+            document.getElementById('displayProfileName').innerText = name;
+            document.getElementById('displayProfilePhone').innerText = phone;
+            document.getElementById('loginScreen').style.display = 'none';
+        }
+
+        // (၂) Profile ပုံကို Camera/Album အသုံးပြု၍ တင်ခြင်း
+        function previewAvatar(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('userAvatarDisplay');
+                output.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // Sidebar View ပြောင်းလဲခြင်း
+        function switchView(viewId, element) {
+            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            element.classList.add('active');
+            closeChatWindow();
+        }
+
+        // (၃) Add Friend လုပ်ဆောင်ချက်
+        function addFriendAction(name, initial, btn) {
+            if (btn.classList.contains('added')) return;
+            btn.innerText = "Friends";
+            btn.classList.add('added');
             
-            if (textInput.value.trim() !== "") {
-                const bubbleElement = document.createElement('div');
-                bubbleElement.classList.add('bubble', 'me');
-                bubbleElement.innerText = textInput.value;
-                
-                chatView.appendChild(bubbleElement);
-                textInput.value = "";
-                
-                // စာမျက်နှာကို အောက်ဆုံးသို့ အလိုအလျောက် ရွှေ့ပေးခြင်း
-                chatView.scrollTop = chatView.scrollHeight;
+            myFriends.push({ name: name, initial: initial });
+            updateFriendsChatList();
+        }
+
+        function updateFriendsChatList() {
+            const list = document.getElementById('friendsChatList');
+            list.innerHTML = "";
+            myFriends.forEach(fri => {
+                const div = document.createElement('div');
+                div.classList.add('person-card');
+                div.innerHTML = `
+                    <div class="person-info" onclick="openChatWindow('${fri.name}', '${fri.initial}')">
+                        <div class="p-avatar">${fri.initial}</div>
+                        <h4>${fri.name}</h4>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: #4b5563;"></i>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        // (၄) Chat Window စနစ် (စာပို့၊ ဖုန်း၊ VC)
+        function openChatWindow(name, initial) {
+            document.getElementById('activeChatName').innerText = name;
+            document.getElementById('activeChatAvatar').innerText = initial;
+            document.getElementById('chatOverlay').style.display = 'flex';
+        }
+
+        function closeChatWindow() {
+            document.getElementById('chatOverlay').style.display = 'none';
+        }
+
+        function sendChat() {
+            const input = document.getElementById('chatInput');
+            const body = document.getElementById('chatBody');
+            if(input.value.trim() !== "") {
+                const bubble = document.createElement('div');
+                bubble.classList.add('msg-bubble', 'outgoing');
+                bubble.innerText = input.value;
+                body.appendChild(bubble);
+                input.value = "";
+                body.scrollTop = body.scrollHeight;
             }
         }
 
-        // ကီးဘုတ်မှ Enter ခလုတ်နှိပ်လျှင်လည်း စာပို့နိုင်ရန်
-        document.getElementById('msgInput').addEventListener('keypress', function (event) {
-            if (event.key === 'Enter') {
-                sendNewMessage();
-            }
-        });
+        // (၅) နေ့စဉ် Story တင်ခြင်း
+        function postStory() {
+            const input = document.getElementById('storyText');
+            const container = document.getElementById('storiesContainer');
+            if(input.value.trim() === "") return;
 
-        // ကောခေါ်ဆိုမှု မျက်နှာပြင်ဖွင့်ခြင်း
-        function openCallScreen(callType) {
-            document.getElementById('callTypeLabel').innerText = callType;
-            document.getElementById('callingScreen').style.display = 'flex';
+            const card = document.createElement('div');
+            card.classList.add('story-card', 'active-story');
+            card.style.background = 'linear-gradient(to bottom, #3b82f6, #1d4ed8)';
+            card.innerHTML = `<p style="font-size:11px; word-break:break-all;">${input.value}</p>`;
+            
+            container.insertBefore(card, container.firstChild);
+            input.value = "";
+            alert("Story တင်ပြီးပါပြီ။");
         }
 
-        // ကောချလိုက်ခြင်း
-        function closeCallScreen() {
-            document.getElementById('callingScreen').style.display = 'none';
+        // (၆) နောက်ခံ Background အရောင်ချိန်းခြင်းစနစ်
+        function changeTheme(bg, panel, card, el) {
+            document.styleSheets[0].addRule(':root', `--bg-color: ${bg};`);
+            document.styleSheets[0].addRule(':root', `--panel-color: ${panel};`);
+            document.styleSheets[0].addRule(':root', `--card-color: ${card};`);
+            
+            document.querySelectorAll('.theme-option').forEach(t => t.classList.remove('selected'));
+            el.classList.add('selected');
         }
     </script>
 </body>
-</html>      
+</html>
