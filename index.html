@@ -3,53 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Connect Social App</title>
+    <title>Connect - Ultimate Persistence Chat & Call App</title>
     <style>
         :root { --main-color: #6c5ce7; --bg-color: #f4f7f6; }
         body { font-family: sans-serif; margin: 0; background: var(--bg-color); overflow-x: hidden; }
         .hidden { display: none !important; }
         
-        /* Login */
+        /* Login screen design */
         #login-screen { height: 100vh; background: linear-gradient(135deg, #6c5ce7, #a29bfe); display: flex; align-items: center; justify-content: center; }
         .card { background: white; padding: 25px; border-radius: 20px; width: 300px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: var(--main-color); color: white; cursor: pointer; font-weight: bold; }
 
-        /* Header */
+        /* Dashboard Application Header */
         header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 10; }
         .profile-small { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--main-color); cursor: pointer; object-fit: cover; }
 
-        /* Story Bar */
+        /* Story management styling */
         .story-bar { display: flex; gap: 15px; padding: 20px; background: white; overflow-x: auto; }
         .story-add { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #2ecc71; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
         .story-item { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #ddd; flex-shrink: 0; overflow: hidden; }
         .story-item img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Chat UI */
+        /* Modal Overlays Layout */
         .modal { position: fixed; inset: 0; background: white; z-index: 100; display: flex; flex-direction: column; }
         .modal-header { padding: 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; }
         .chat-stream { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #efeae2; }
-        .bubble { padding: 10px 15px; border-radius: 15px; max-width: 75%; position: relative; }
+        
+        /* Message elements status system */
+        .bubble { padding: 10px 15px; border-radius: 15px; max-width: 75%; position: relative; display: flex; flex-direction: column; }
         .bubble.me { background: #d9fdd3; align-self: flex-end; }
         .bubble.other { background: white; align-self: flex-start; }
+        .tick { font-size: 11px; align-self: flex-end; margin-top: 3px; font-weight: bold; }
+        .tick.sent { color: #f39c12; }
+        .tick.read { color: #2ecc71; }
         
-        /* Chat Input Bar */
+        /* Message composition input elements */
         .chat-input-bar { padding: 10px; background: #f0f0f0; display: flex; align-items: center; gap: 8px; }
         .media-btn { font-size: 22px; cursor: pointer; padding: 5px; }
         .rec-active { color: red; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0; } }
 
-        /* Profile & FAB */
+        /* Dynamic directory listing and action floating button */
+        .contact-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: white; margin: 10px 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
         .big-img { width: 120px; height: 120px; border-radius: 50%; background: #eee; margin: 20px auto; display: block; border: 4px solid var(--main-color); object-fit: cover; }
         .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--main-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 90; }
         
-        /* Call Overlay */
-        .call-screen { position: fixed; inset: 0; background: #2c3e50; color: white; z-index: 300; display: flex; flex-direction: column; align-items: center; justify-content: space-around; }
+        /* Realistic Telephone System Interface Layout */
+        .call-screen { position: fixed; inset: 0; background: linear-gradient(to bottom, #2c3e50, #1a252f); color: white; z-index: 300; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 60px 20px; text-align: center; }
+        .call-avatar { width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; font-size: 50px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        .call-controls-panel { display: flex; justify-content: space-around; width: 100%; max-width: 320px; margin-bottom: 40px; }
+        .circle-btn { width: 60px; height: 60px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; color: white; transition: 0.2s; }
+        .circle-btn.hangup { background: #ff4757; }
+        .circle-btn.option { background: rgba(255,255,255,0.15); }
+        .circle-btn.option.active { background: #2ecc71; }
     </style>
 </head>
 <body>
 
-    <!-- LOGIN SCREEN -->
+    <!-- 1. LOGIN SCREEN -->
     <div id="login-screen">
         <div class="card">
             <h2 style="text-align: center; color: var(--main-color);">Connect</h2>
@@ -60,11 +72,11 @@
         </div>
     </div>
 
-    <!-- MAIN APP -->
+    <!-- 2. MAIN APP -->
     <div id="main-app" class="hidden">
         <header>
             <h2 style="margin:0; color: var(--main-color);">Connect</h2>
-            <img src="https://flaticon.com" class="profile-small" onclick="openModal('profile-modal')">
+            <img src="flaticon.com" class="profile-small" onclick="openModal('profile-modal')">
         </header>
 
         <div class="story-bar">
@@ -82,12 +94,12 @@
         <div class="fab" onclick="openModal('search-modal')">+</div>
     </div>
 
-    <!-- CHAT BOX -->
+    <!-- 3. CHAT BOX -->
     <div id="chat-modal" class="modal hidden">
         <div class="modal-header">
-            <button onclick="closeModal('chat-modal')">Back</button>
+            <button onclick="closeChatWindow()">Back</button>
             <b id="chat-user-name" onclick="viewFriendProfile()">Friend Name</b>
-            <button onclick="startCall()" style="background:#2ecc71; width:auto; padding:5px 10px;">📞 Call</button>
+            <button onclick="startCall()" style="background:#2ecc71; width:auto; padding:5px 15px; border-radius:8px;">📞 Call</button>
         </div>
         <div id="chat-stream" class="chat-stream"></div>
         <div class="chat-input-bar">
@@ -99,12 +111,29 @@
         </div>
     </div>
 
-    <!-- CALL SCREEN -->
-    <div id="call-screen" class="call-screen hidden">
-        <h2>Calling...</h2>
-        <h1 id="call-target">Name</h1>
-        <div id="timer">00:00</div>
-        <button onclick="endCall()" style="background:red; border-radius:50px; width:150px;">End Call</button>
+    <!-- 4. CHATBOT MODAL -->
+    <div id="bot-modal" class="modal hidden">
+        <div class="modal-header">
+            <button onclick="closeModal('bot-modal')">Back</button>
+            <span>Welcome Chatbot</span>
+            <div style="width:40px;"></div>
+        </div>
+        <div id="bot-msgs" style="flex:1; padding: 20px; overflow-y: auto; background: #efeae2;"></div>
+        <div class="chat-input-bar">
+            <input type="text" id="bot-in" placeholder="Ask AI..." style="flex:1; padding:10px; border-radius:10px; border:1px solid #ddd;">
+            <button onclick="sendToBot()" style="width: 70px;">Send</button>
+        </div>
+    </div>
+
+    <!-- FRIEND PROFILE MODAL -->
+    <div id="friend-profile-modal" class="modal hidden">
+        <div class="modal-header"><button onclick="closeModal('friend-profile-modal')">Back</button><span>Friend Info</span><div></div></div>
+        <div style="text-align: center; padding: 20px;">
+            <img src="flaticon.com" class="big-img">
+            <h2 id="f-p-name">Friend</h2>
+            <p id="f-p-phone">09...</p>
+            <div style="background: #2ecc71; color: white; padding: 10px; border-radius: 20px; display: inline-block; width: 120px; font-weight: bold;">✓ Friend</div>
+        </div>
     </div>
 
     <!-- SEARCH MODAL -->
@@ -117,10 +146,10 @@
         </div>
     </div>
 
-    <!-- PROFILE MODAL (OWN) -->
+    <!-- OWN PROFILE MODAL -->
     <div id="profile-modal" class="modal hidden">
         <div class="modal-header"><button onclick="closeModal('profile-modal')">Back</button> <span>My Profile</span> <div></div></div>
-        <img src="https://flaticon.com" class="big-img">
+        <img src="flaticon.com" class="big-img">
         <div style="padding:20px; text-align:center;">
             <h2 id="my-name-disp">Name</h2>
             <p id="my-phone-disp">Phone</p>
@@ -139,64 +168,245 @@
         </div>
     </div>
 
+    <!-- REALISTIC AUDIO TELEPHONY OVERLAY SCREEN -->
+    <div id="call-screen" class="call-screen hidden">
+        <div>
+            <div class="call-avatar">👤</div>
+            <h1 id="call-target" style="margin: 5px 0;">Name</h1>
+            <h3 id="call-status" style="color: #bdc3c7; font-weight: normal; margin: 5px 0;">Call Waiting...</h3>
+        </div>
+        
+        <h2 id="timer" style="font-size: 32px; font-weight: 300; letter-spacing: 1px; visibility: hidden;">00:00</h2>
+        
+        <div class="call-controls-panel">
+            <button id="speaker-btn" class="circle-btn option" onclick="toggleSpeaker()">🔊</button>
+            <button id="mute-btn" class="circle-btn option" onclick="toggleMute()">🎙️</button>
+            <button class="circle-btn hangup" onclick="endCall()">📞</button>
+        </div>
+    </div>
+
+    <canvas id="hidden-canvas" class="hidden"></canvas>
+
     <script>
-        let mediaRecorder;
-        let audioChunks = [];
-        let isRecording = false;
-        let stream;
-        let camMode = "user";
+        let mediaRecorder, audioChunks = [], isRecording = false, stream, camMode = "user", activeChatPhone = null;
+        let callTimerInterval, callProgressTimeout, ringerInterval, audioCtx;
+        let isSpeakerOn = false, isMuted = false;
+
         const mockDb = {"09123456789": {name: "Ko Mg Mg", phone: "09123456789"}};
 
-        // AUTH
-        function login() {
-            const u = { name: document.getElementById('reg-name').value, phone: document.getElementById('reg-phone').value };
-            if(!u.name || !u.phone) return alert("Fill all!");
-            localStorage.setItem('user', JSON.stringify(u));
-            location.reload();
-        }
+        // INITIAL SYSTEM BOOTSTRAP UPON RESTART
         window.onload = () => {
-            const saved = localStorage.getItem('user');
-            if(saved) {
-                const u = JSON.parse(saved);
+            const savedUser = localStorage.getItem('user');
+            if(savedUser) {
+                const u = JSON.parse(savedUser);
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
                 document.getElementById('my-name-disp').innerText = u.name;
                 document.getElementById('my-phone-disp').innerText = u.phone;
+                renderRecentChats();
+                renderStories();
+                renderBotMessages();
             }
         };
+
+        function login() {
+            const u = { name: document.getElementById('reg-name').value, phone: document.getElementById('reg-phone').value };
+            if(!u.name || !u.phone) return alert("Fill all!");
+            localStorage.setItem('user', JSON.stringify(u));
+            localStorage.setItem('chats', JSON.stringify({}));
+            localStorage.setItem('stories', JSON.stringify([]));
+            localStorage.setItem('bot_msgs', JSON.stringify([{text: "Hello! I am AI. How can I help you?", isBot: true}]));
+            location.reload();
+        }
         function logout() { localStorage.clear(); location.reload(); }
 
-        // MODALS
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // SEARCH & CHAT
+        // SUBSCRIBER RECOVERY MANAGEMENT
         function searchFriend() {
             const ph = document.getElementById('search-ph').value;
             const res = document.getElementById('search-res');
             if(mockDb[ph]) {
-                res.innerHTML = `<div style="padding:15px; background:#eee; border-radius:10px; display:flex; justify-content:space-between;">
-                    <b>${mockDb[ph].name}</b> <button onclick="startChat('${ph}')" style="width:auto;">Chat</button>
+                res.innerHTML = `<div class="contact-item" onclick="startChat('${ph}')">
+                    <b>${mockDb[ph].name}</b> <span style="color:var(--main-color)">Chat</span>
                 </div>`;
             } else { res.innerHTML = "No user found."; }
         }
 
         function startChat(ph) {
+            activeChatPhone = ph;
             closeModal('search-modal');
             document.getElementById('chat-user-name').innerText = mockDb[ph].name;
+            
+            let chats = JSON.parse(localStorage.getItem('chats')) || {};
+            if(!chats[ph]) chats[ph] = [];
+            localStorage.setItem('chats', JSON.stringify(chats));
+
+            renderChatStream();
+            renderRecentChats();
             openModal('chat-modal');
+        }
+
+        function closeChatWindow() {
+            closeModal('chat-modal');
+            activeChatPhone = null;
+            renderRecentChats();
+        }
+
+        function renderRecentChats() {
+            const chats = JSON.parse(localStorage.getItem('chats')) || {};
+            const list = document.getElementById('recent-chats-list');
+            list.innerHTML = "";
+            for (let ph in chats) {
+                if(mockDb[ph]) {
+                    list.innerHTML += `<div class="contact-item" onclick="startChat('${ph}')">
+                        <b>${mockDb[ph].name}</b><small style="color:gray;">${ph}</small>
+                    </div>`;
+                }
+            }
+        }
+
+        function renderChatStream() {
+            if(!activeChatPhone) return;
+            const chats = JSON.parse(localStorage.getItem('chats')) || {};
+            const stream = document.getElementById('chat-stream');
+            stream.innerHTML = "";
+            
+            (chats[activeChatPhone] || []).forEach(msg => {
+                if(msg.type === 'text') {
+                    stream.innerHTML += `<div class="bubble ${msg.sender}">
+                        ${msg.content}
+                        ${msg.sender === 'me' ? `<span class="tick ${msg.status === 'read' ? 'read' : 'sent'}">${msg.status === 'read' ? '✓✓' : '✓'}</span>` : ''}
+                    </div>`;
+                } else if(msg.type === 'media') {
+                    let mediaTag = msg.mediaType === 'img' ? `<img src="${msg.content}" style="width:100%; border-radius:10px;">` : `<video src="${msg.content}" controls style="width:100%; border-radius:10px;"></video>`;
+                    stream.innerHTML += `<div class="bubble ${msg.sender}">${mediaTag}</div>`;
+                } else if(msg.type === 'voice') {
+                    stream.innerHTML += `<div class="bubble ${msg.sender}"><audio src="${msg.content}" controls></audio></div>`;
+                }
+            });
+            stream.scrollTop = stream.scrollHeight;
         }
 
         function sendText() {
             const inp = document.getElementById('chat-in');
             if(!inp.value) return;
-            const box = document.getElementById('chat-stream');
-            box.innerHTML += `<div class="bubble me">${inp.value}</div>`;
+            
+            let chats = JSON.parse(localStorage.getItem('chats')) || {};
+            let msgId = Date.now();
+            
+            let newMsg = { id: msgId, type: 'text', sender: 'me', content: inp.value, status: 'sent' };
+            chats[activeChatPhone].push(newMsg);
+            localStorage.setItem('chats', JSON.stringify(chats));
+            renderChatStream();
             inp.value = "";
-            box.scrollTop = box.scrollHeight;
+
+            setTimeout(() => {
+                let currentChats = JSON.parse(localStorage.getItem('chats'));
+                let m = currentChats[activeChatPhone].find(x => x.id === msgId);
+                if(m) m.status = 'read';
+                localStorage.setItem('chats', JSON.stringify(currentChats));
+                renderChatStream();
+            }, 1500);
         }
 
-        // VOICE RECORDING (REAL)
+        // TELEPHONY LOGIC ENGINE WITH INTEGRATED AUDIO AND VIBRATION
+        function startCall() {
+            document.getElementById('call-target').innerText = document.getElementById('chat-user-name').innerText;
+            document.getElementById('call-status').innerText = "Call Waiting...";
+            document.getElementById('timer').style.visibility = "hidden";
+            
+            // Reset state controls
+            isSpeakerOn = false; isMuted = false;
+            document.getElementById('speaker-btn').classList.remove('active');
+            document.getElementById('mute-btn').classList.remove('active');
+
+            openModal('call-screen');
+            playSoftRingtones();
+
+            // Simulate call connection and answering mechanics after 4 seconds
+            callProgressTimeout = setTimeout(() => {
+                stopSoftRingtones();
+                document.getElementById('call-status').innerText = "Connected";
+                const timerElem = document.getElementById('timer');
+                timerElem.style.visibility = "visible";
+                timerElem.innerText = "00:00";
+                
+                let totalSeconds = 0;
+                clearInterval(callTimerInterval);
+                callTimerInterval = setInterval(() => {
+                    totalSeconds++;
+                    let mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+                    let secs = (totalSeconds % 60).toString().padStart(2, '0');
+                    timerElem.innerText = `${mins}:${secs}`;
+                }, 1000);
+            }, 4000);
+        }
+
+        // PROCEDURAL SWEET MELODY SOUND GENERATOR (WEB AUDIO API)
+        function playSoftRingtones() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Triggers hardware vibration cadence loop
+            if (navigator.vibrate) {
+                navigator.vibrate([500, 1000, 500, 1000]);
+                ringerInterval = setInterval(() => {
+                    if (navigator.vibrate) navigator.vibrate([500, 1000, 500, 1000]);
+                    generateSweetTone();
+                }, 2500);
+            } else {
+                ringerInterval = setInterval(() => { generateSweetTone(); }, 2500);
+            }
+            generateSweetTone();
+        }
+
+        function generateSweetTone() {
+            if (!audioCtx) return;
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            
+            // Sine wave yields a round, pleasant sound parameters
+            osc.type = 'sine'; 
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5 Musical Key
+            osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.4); // E5 Key Transition
+            
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.8);
+        }
+
+        function stopSoftRingtones() {
+            clearInterval(ringerInterval);
+            if (navigator.vibrate) navigator.vibrate(0); // Clear hardware vibration loops immediately
+        }
+
+        function endCall() {
+            stopSoftRingtones();
+            clearTimeout(callProgressTimeout);
+            clearInterval(callTimerInterval);
+            closeModal('call-screen');
+        }
+
+        function toggleSpeaker() {
+            isSpeakerOn = !isSpeakerOn;
+            let btn = document.getElementById('speaker-btn');
+            if(isSpeakerOn) btn.classList.add('active');
+            else btn.classList.remove('active');
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            let btn = document.getElementById('mute-btn');
+            if(isMuted) btn.classList.add('active');
+            else btn.classList.remove('active');
+        }
+
+        // VOICE RECORDING CONTROLS
         async function toggleVoiceRecord() {
             const btn = document.getElementById('mic-btn');
             if (!isRecording) {
@@ -209,8 +419,14 @@
                 mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
                 mediaRecorder.onstop = () => {
                     const blob = new Blob(audioChunks, { type: 'audio/mp3' });
-                    const url = URL.createObjectURL(blob);
-                    document.getElementById('chat-stream').innerHTML += `<div class="bubble me"><audio src="${url}" controls></audio></div>`;
+                    const reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = () => {
+                        let chats = JSON.parse(localStorage.getItem('chats'));
+                        chats[activeChatPhone].push({ type: 'voice', sender: 'me', content: reader.result });
+                        localStorage.setItem('chats', JSON.stringify(chats));
+                        renderChatStream();
+                    }
                 };
             } else {
                 mediaRecorder.stop();
@@ -219,41 +435,88 @@
             }
         }
 
-        // PHOTO/VIDEO SENDING
-        function sendMedia(input, type) {
+        function sendMedia(input, mediaType) {
             const file = input.files[0];
             if(!file) return;
-            const url = URL.createObjectURL(file);
-            const box = document.getElementById('chat-stream');
-            if(type === 'img') box.innerHTML += `<div class="bubble me"><img src="${url}" style="width:100%; border-radius:10px;"></div>`;
-            else box.innerHTML += `<div class="bubble me"><video src="${url}" controls style="width:100%; border-radius:10px;"></video></div>`;
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                let chats = JSON.parse(localStorage.getItem('chats'));
+                chats[activeChatPhone].push({ type: 'media', mediaType: mediaType, sender: 'me', content: reader.result });
+                localStorage.setItem('chats', JSON.stringify(chats));
+                renderChatStream();
+            }
+        }
+
+        // CHATBOT INTERACTION EXECUTIONS
+        function renderBotMessages() {
+            const msgs = JSON.parse(localStorage.getItem('bot_msgs')) || [];
+            const box = document.getElementById('bot-msgs');
+            box.innerHTML = "";
+            msgs.forEach(m => {
+                box.innerHTML += `<div style="background:${m.isBot ? 'white':'var(--main-color)'}; color:${m.isBot ? 'black':'white'}; padding:10px; border-radius:10px; margin:5px ${m.isBot ? 'auto 5px 0':'0 5px 5px auto'}; width:fit-content;">${m.text}</div>`;
+            });
             box.scrollTop = box.scrollHeight;
         }
 
-        // CALL
-        function startCall() {
-            document.getElementById('call-target').innerText = document.getElementById('chat-user-name').innerText;
-            openModal('call-screen');
-        }
-        function endCall() { closeModal('call-screen'); }
+        function sendToBot() {
+            const inp = document.getElementById('bot-in');
+            if(!inp.value) return;
+            let msgs = JSON.parse(localStorage.getItem('bot_msgs')) || [];
+            msgs.push({text: inp.value, isBot: false});
+            localStorage.setItem('bot_msgs', JSON.stringify(msgs));
+            renderBotMessages();
+            
+            const userTxt = inp.value;
+            inp.value = "";
 
-        // CAMERA
+            setTimeout(() => {
+                let currentMsgs = JSON.parse(localStorage.getItem('bot_msgs'));
+                currentMsgs.push({text: `"${userTxt}" အတွက် ကျေးဇူးတင်ပါတယ်။ ကျွန်တော်က AI ပါ။`, isBot: true});
+                localStorage.setItem('bot_msgs', JSON.stringify(currentMsgs));
+                renderBotMessages();
+            }, 800);
+        }
+
+        // STORIES LAYER ACTIONS
+        function renderStories() {
+            const stories = JSON.parse(localStorage.getItem('stories')) || [];
+            const list = document.getElementById('story-list');
+            list.innerHTML = "";
+            stories.forEach(s => {
+                list.innerHTML += `<div class="story-item"><img src="${s}"></div>`;
+            });
+        }
+
         async function openCamera() {
             openModal('camera-modal');
             stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: camMode } });
             document.getElementById('video-feed').srcObject = stream;
         }
-        function closeCamera() {
-            stream.getTracks().forEach(t => t.stop());
-            closeModal('camera-modal');
-        }
-        function flipCam() {
-            camMode = camMode === "user" ? "environment" : "user";
-            closeCamera(); openCamera();
-        }
+        function closeCamera() { stream.getTracks().forEach(t => t.stop()); closeModal('camera-modal'); }
+        function flipCam() { camMode = camMode === "user" ? "environment" : "user"; closeCamera(); openCamera(); }
+        
         function takeShot() {
-            alert("Story Posted! Will disappear in 24 hours.");
+            const video = document.getElementById('video-feed');
+            const canvas = document.getElementById('hidden-canvas');
+            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            let imgData = canvas.toDataURL('image/jpeg');
+            
+            let stories = JSON.parse(localStorage.getItem('stories')) || [];
+            stories.push(imgData);
+            localStorage.setItem('stories', JSON.stringify(stories));
+            
+            renderStories();
             closeCamera();
+            alert("Story တင်ပြီးပါပြီ။ ၂၄ နာရီအတွင်း ပျောက်သွားပါမည်။");
+        }
+
+        function viewFriendProfile() {
+            if(!activeChatPhone) return;
+            document.getElementById('f-p-name').innerText = mockDb[activeChatPhone].name;
+            document.getElementById('f-p-phone').innerText = mockDb[activeChatPhone].phone;
+            openModal('friend-profile-modal');
         }
     </script>
 </body>
