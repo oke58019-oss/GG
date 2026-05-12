@@ -3,153 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Myanmar Chat App</title>
+    <title>Messenger App Final</title>
     <style>
         :root { --primary-color: #075e54; --app-bg: #f0f2f5; }
-        body { font-family: sans-serif; margin: 0; background: var(--app-bg); transition: 0.3s; }
+        body { font-family: sans-serif; margin: 0; background: var(--app-bg); transition: 0.3s; overflow-x: hidden; }
         
         /* Login Screen */
-        #login-screen { position: fixed; inset: 0; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
-        .input-group { margin: 10px; width: 80%; }
-        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .btn-login { width: 80%; padding: 12px; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        #login-screen { position: fixed; inset: 0; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; }
+        .input-group { margin: 10px; width: 85%; }
+        input { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
+        .btn-main { width: 85%; padding: 15px; background: var(--primary-color); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; }
 
-        /* App Layout */
-        header { background: var(--primary-color); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .profile-circle { width: 35px; height: 35px; border-radius: 50%; background: #ccc; cursor: pointer; border: 2px solid white; object-fit: cover; }
+        /* Main UI */
+        header { background: var(--primary-color); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .profile-circle { width: 40px; height: 40px; border-radius: 50%; background: #ddd; cursor: pointer; border: 2px solid white; overflow: hidden; position: relative; }
+        .profile-circle img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Story Section */
+        .story-section { padding: 15px; background: white; display: flex; gap: 15px; overflow-x: auto; border-bottom: 1px solid #ddd; }
+        .story-item { text-align: center; font-size: 12px; min-width: 65px; }
+        .story-circle { width: 60px; height: 60px; border-radius: 50%; border: 3px solid #25d366; display: flex; align-items: center; justify-content: center; background: #eee; cursor: pointer; margin-bottom: 5px; font-size: 24px; }
 
-        /* Profile Panel */
-        #profile-panel { display: none; position: fixed; inset: 0; background: white; z-index: 500; padding: 20px; overflow-y: auto; }
-        .three-dots { float: right; font-size: 24px; cursor: pointer; padding: 5px; }
-        .logout-btn { margin-top: 30px; background: #ff4444; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; }
-        .theme-apply-btn { margin-top: 10px; background: var(--primary-color); color: white; padding: 8px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        /* Floating Action Button */
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: #25d366; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 30px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 90; }
 
-        /* Others */
-        .story-section { padding: 15px; background: white; display: flex; border-bottom: 1px solid #eee; }
-        .story-add { width: 60px; height: 60px; border-radius: 50%; border: 3px solid #25d366; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        /* Chat Screen */
+        #chat-screen { display: none; position: fixed; inset: 0; background: white; z-index: 2500; flex-direction: column; }
+        #message-area { flex: 1; padding: 15px; overflow-y: auto; background: #e5ddd5; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 8px 12px; border-radius: 10px; max-width: 75%; font-size: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .sent { align-self: flex-end; background: #dcf8c6; }
+        .received { align-self: flex-start; background: white; }
+
+        /* Profile & Camera */
+        #profile-panel { display: none; position: fixed; inset: 0; background: white; z-index: 1500; padding: 20px; overflow-y: auto; }
+        #camera-layer { display: none; position: fixed; inset: 0; background: black; z-index: 4000; }
+        video { width: 100%; height: 100%; object-fit: cover; }
+        .cam-btns { position: absolute; bottom: 40px; width: 100%; display: flex; justify-content: space-around; }
+
+        /* Contact Modal */
+        #contact-modal { display: none; position: fixed; inset: 0; background: white; z-index: 2000; padding: 20px; }
+        .chat-card { background: #fff; padding: 12px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 15px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <!-- Login Screen -->
     <div id="login-screen">
-        <h2 style="color: var(--primary-color)">Welcome Chat</h2>
-        <div class="input-group"><input type="text" id="login-name" placeholder="အမည် (User Name)"></div>
-        <div class="input-group"><input type="tel" id="login-phone" placeholder="ဖုန်းနံပါတ်"></div>
-        <div class="input-group"><input type="password" id="login-pass" placeholder="စကားဝှက် (Password)"></div>
-        <button class="btn-login" onclick="handleLogin()">ဝင်မည်</button>
+        <h2 style="color:var(--primary-color)">Messenger</h2>
+        <div class="input-group"><input type="text" id="reg-name" placeholder="အမည် (User Name)"></div>
+        <div class="input-group"><input type="tel" id="reg-phone" placeholder="ဖုန်းနံပါတ်"></div>
+        <div class="input-group"><input type="password" id="reg-pass" placeholder="စကားဝှက် (Password)"></div>
+        <button class="btn-main" onclick="registerAndLogin()">ဝင်မည်</button>
     </div>
 
     <!-- Main App Content -->
     <div id="main-app" style="display:none;">
-        <header id="app-header">
-            <span>Messenger</span>
-            <div class="profile-circle" onclick="toggleProfile()"></div>
+        <header id="main-header">
+            <span style="font-size: 20px; font-weight: bold;">Chats</span>
+            <div class="profile-circle" onclick="toggleProfile()">
+                <img id="header-img" src="https://placeholder.com">
+            </div>
         </header>
 
         <div class="story-section">
-            <div class="story-add" onclick="alert('Camera ဖွင့်နေသည်...')"></div>
+            <div class="story-item">
+                <div class="story-circle" onclick="startCamera('environment')">📷</div>
+                <span>Story တင်ရန်</span>
+            </div>
         </div>
 
-        <div style="padding: 20px; text-align: center; color: #888;">
-            သူငယ်ချင်းအသစ်များထည့်ရန် + ကိုနှိပ်ပါ
+        <div id="main-chat-list">
+            <!-- Welcome Bot -->
+            <div class="chat-card" onclick="openChat('Welcome Bot')">
+                <div class="profile-circle" style="background:var(--primary-color); display:flex; align-items:center; justify-content:center; color:white;">🤖</div>
+                <div><b>Welcome Bot</b><br><small style="color:green;">မင်္ဂလာပါ၊ ကြိုဆိုပါတယ်!</small></div>
+            </div>
+        </div>
+
+        <div class="fab" onclick="openContactSearch()">+</div>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id="chat-screen">
+        <header style="background:var(--primary-color); color:white; padding:10px; display:flex; align-items:center; gap:10px;">
+            <span onclick="closeChat()" style="cursor:pointer; font-size:22px;">⬅</span>
+            <div class="profile-circle" style="width:35px; height:35px;"></div>
+            <div style="flex:1"><b id="chat-user-name">User Name</b><br><small>Online</small></div>
+            <span onclick="alert('ဖုန်းခေါ်ဆိုနေပါသည်...')" style="cursor:pointer; font-size:20px;">📞</span>
+        </header>
+        <div id="message-area"></div>
+        <div style="padding:10px; background:#f0f0f0; display:flex; align-items:center; gap:10px;">
+            <span onclick="alert('Photo/Video ရွေးရန်')" style="cursor:pointer; font-size:20px;">📎</span>
+            <input type="text" id="msg-input" placeholder="စာရိုက်ပါ..." style="flex:1; padding:10px; border:none; border-radius:20px;">
+            <span id="voice-btn" onclick="alert('Voice Recording...')" style="cursor:pointer; font-size:20px;">🎙️</span>
+            <span id="send-btn" onclick="sendText()" style="display:none; cursor:pointer; font-size:22px; color:var(--primary-color);">➤</span>
         </div>
     </div>
 
     <!-- Profile Panel -->
     <div id="profile-panel">
-        <span onclick="toggleProfile()" style="cursor:pointer; font-size: 18px;">⬅ နောက်သို့</span>
-        <span class="three-dots" onclick="showOptions()">⋮</span>
-        
-        <center style="margin-top: 20px;">
-            <div class="profile-circle" style="width:100px; height:100px;"></div>
-            <h3 id="prof-name-disp">User Name</h3>
-            <p id="prof-bio">Bio: Happy Coding!</p>
-            <p id="prof-phone-disp">Phone: 09xxxxxxx</p>
-            
-            <div style="margin: 20px 0; text-align: left; width: 80%;">
-                <label>ဖုန်းနံပါတ်မြင်နိုင်သူ:</label>
-                <select style="width: 100%; padding: 8px; margin-top: 5px;">
-                    <option>Only Me</option>
-                    <option>Friends Only</option>
-                    <option>Public</option>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span onclick="toggleProfile()" style="cursor:pointer; font-size:18px;">⬅ Back</span>
+            <span style="font-size:24px; cursor:pointer;" onclick="showProfileOptions()">⋮</span>
+        </div>
+        <center>
+            <div class="profile-circle" style="width:100px; height:100px; margin: 20px;">
+                <img id="profile-img-large" src="https://placeholder.com">
+            </div>
+            <h2 id="p-name">Name</h2>
+            <p id="p-bio">Bio: Hello! I am using Messenger.</p>
+            <p id="p-phone">Phone: -</p>
+            <div style="text-align:left; width:85%; margin-top:20px;">
+                <label>ဖုန်းနံပါတ် မြင်နိုင်သူ:</label>
+                <select id="p-privacy" style="width:100%; padding:10px; margin-top:5px;">
+                    <option>Only Me</option><option>Friends Only</option><option>Public</option>
                 </select>
+                <div style="margin-top:20px; background:#f9f9f9; padding:15px; border-radius:10px;">
+                    <label><b>Theme အရောင်ပြောင်းရန်:</b></label><br>
+                    <input type="color" id="theme-picker" style="width:100%; height:40px; margin:10px 0;">
+                    <button class="btn-main" style="width:100%;" onclick="saveTheme()">တပ်ဆင်မည်</button>
+                </div>
+                <button class="btn-main" style="background:#ff4444; margin-top:30px; width:100%;" onclick="logOut()">Log Out ထွက်မည်</button>
             </div>
-
-            <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; width: 80%;">
-                <label>Theme အရောင်ရွေးရန်:</label><br><br>
-                <input type="color" id="theme-color-picker" style="width: 50px; height: 50px; cursor: pointer;">
-                <br>
-                <button class="theme-apply-btn" onclick="applyTheme()">တပ်ဆင်မည်</button>
-            </div>
-
-            <button class="logout-btn" onclick="handleLogout()">Log Out ထွက်မည်</button>
         </center>
     </div>
 
+    <!-- Contact Search Modal -->
+    <div id="contact-modal">
+        <span onclick="closeContactSearch()" style="cursor:pointer; font-size:20px;">⬅ ရှာဖွေရန်</span>
+        <input type="tel" id="search-input" placeholder="ဖုန်းနံပါတ်ဖြင့် ရှာဖွေပါ..." onkeyup="searchUser()" style="margin-top:20px;">
+        <div id="search-results" style="margin-top:20px;"></div>
+    </div>
+
+    <!-- Camera Layer -->
+    <div id="camera-layer">
+        <video id="video-stream" autoplay playsinline></video>
+        <div class="cam-btns">
+            <button class="btn-main" style="width:70px; height:70px; border-radius:50%; background:red;" onclick="closeCamera()">❌</button>
+            <button class="btn-main" style="width:70px; height:70px; border-radius:50%; background:white;" onclick="alert('Photo Taken!')">📸</button>
+            <button class="btn-main" style="width:70px; height:70px; border-radius:50%;" onclick="switchCamera()">🔄</button>
+        </div>
+    </div>
+
     <script>
-        // ဒေတာများကို မှတ်ထားရန် Variable များ
-        let registeredUser = null;
+        let currentUser = null;
+        let currentStream = null;
+        let facingMode = "user";
 
-        function handleLogin() {
-            const name = document.getElementById('login-name').value;
-            const phone = document.getElementById('login-phone').value;
-            const pass = document.getElementById('login-pass').value;
+        // Login Check
+        window.onload = () => {
+            const savedUser = localStorage.getItem('user');
+            if(savedUser) { currentUser = JSON.parse(savedUser); loadApp(); }
+            const savedTheme = localStorage.getItem('theme');
+            if(savedTheme) applyTheme(savedTheme);
+        };
 
-            if(!name || !phone || !pass) {
-                alert("အချက်အလက်အားလုံး ပြည့်စုံအောင် ဖြည့်ပါ");
-                return;
-            }
-
-            // ပထမဆုံးအကြိမ်ဝင်တာဆိုရင် User ကို Register လုပ်လိုက်မယ်
-            if (!registeredUser) {
-                registeredUser = { name, phone, pass };
-                enterApp();
-            } else {
-                // နောက်တစ်ကြိမ်ပြန်ဝင်ရင် ဖုန်းနဲ့ Password ကို စစ်မယ်
-                if (phone === registeredUser.phone && pass === registeredUser.pass) {
-                    enterApp();
-                } else {
-                    alert("ဖုန်းနံပါတ် သို့မဟုတ် စကားဝှက် မှားယွင်းနေပါသည်။");
-                }
-            }
+        function registerAndLogin() {
+            const name = document.getElementById('reg-name').value;
+            const phone = document.getElementById('reg-phone').value;
+            const pass = document.getElementById('reg-pass').value;
+            if(name && phone && pass) {
+                currentUser = { name, phone, pass };
+                localStorage.setItem('user', JSON.stringify(currentUser));
+                loadApp();
+            } else { alert("အချက်အလက်ဖြည့်ပါ"); }
         }
 
-        function enterApp() {
+        function loadApp() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
-            document.getElementById('prof-name-disp').innerText = registeredUser.name;
-            document.getElementById('prof-phone-disp').innerText = "Phone: " + registeredUser.phone;
+            document.getElementById('p-name').innerText = currentUser.name;
+            document.getElementById('p-phone').innerText = "Phone: " + currentUser.phone;
         }
 
-        function handleLogout() {
-            if(confirm("အကောင့်ထဲမှ ထွက်မှာ သေချာသလား?")) {
-                document.getElementById('main-app').style.display = 'none';
-                document.getElementById('profile-panel').style.display = 'none';
-                document.getElementById('login-screen').style.display = 'flex';
-                // Password ကွက်လပ်ကို ရှင်းထုတ်လိုက်မယ်
-                document.getElementById('login-pass').value = "";
+        document.getElementById('msg-input').addEventListener('input', function(e) {
+            document.getElementById('send-btn').style.display = e.target.value.trim() ? "block" : "none";
+            document.getElementById('voice-btn').style.display = e.target.value.trim() ? "none" : "block";
+        });
+
+        function sendText() {
+            const input = document.getElementById('msg-input');
+            const area = document.getElementById('message-area');
+            area.innerHTML += `<div class="msg sent">${input.value}</div>`;
+            input.value = "";
+            area.scrollTop = area.scrollHeight;
+            document.getElementById('send-btn').style.display = "none";
+            document.getElementById('voice-btn').style.display = "block";
+        }
+
+        function saveTheme() {
+            const color = document.getElementById('theme-picker').value;
+            localStorage.setItem('theme', color);
+            applyTheme(color);
+            alert("Theme တပ်ဆင်ပြီးပါပြီ");
+        }
+
+        function applyTheme(color) {
+            document.documentElement.style.setProperty('--primary-color', color);
+            document.getElementById('main-header').style.backgroundColor = color;
+            document.body.style.backgroundColor = color + "10";
+        }
+
+        async function startCamera(mode) {
+            facingMode = mode;
+            document.getElementById('camera-layer').style.display = 'block';
+            try {
+                currentStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode } });
+                document.getElementById('video-stream').srcObject = currentStream;
+            } catch (e) { alert("Camera ဖွင့်မရပါ"); closeCamera(); }
+        }
+
+        function closeCamera() {
+            if(currentStream) currentStream.getTracks().forEach(t => t.stop());
+            document.getElementById('camera-layer').style.display = 'none';
+        }
+
+        function switchCamera() { closeCamera(); startCamera(facingMode === "user" ? "environment" : "user"); }
+        function toggleProfile() { const p = document.getElementById('profile-panel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
+        function openChat(name) { document.getElementById('chat-screen').style.display = 'flex'; document.getElementById('chat-user-name').innerText = name; }
+        function closeChat() { document.getElementById('chat-screen').style.display = 'none'; }
+        function openContactSearch() { document.getElementById('contact-modal').style.display = 'block'; }
+        function closeContactSearch() { document.getElementById('contact-modal').style.display = 'none'; }
+        function logOut() { if(confirm("Log Out ထွက်မှာလား?")) { localStorage.removeItem('user'); location.reload(); } }
+        function showProfileOptions() {
+            const act = confirm("Profile ပုံ ကြည့်မလား (OK) သို့မဟုတ် ပြောင်းမလား (Cancel)?");
+            if(!act) alert("Album ထဲမှ ပုံရွေးချယ်ရန် ပြင်ဆင်နေသည်...");
+        }
+        function searchUser() {
+            const val = document.getElementById('search-input').value;
+            if(val.length > 5) {
+                document.getElementById('search-results').innerHTML = `<div class="chat-card" onclick="openChat('${val}'); closeContactSearch();"><div class="profile-circle"></div><div style="flex:1"><b>User (${val})</b><br><small>Online</small></div><button style="background:#25d366; color:white; border:none; padding:8px; border-radius:5px;">Chat</button></div>`;
             }
-        }
-
-        function toggleProfile() {
-            const panel = document.getElementById('profile-panel');
-            panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function applyTheme() {
-            const selectedColor = document.getElementById('theme-color-picker').value;
-            // Header နဲ့ ခလုတ်တွေ အရောင်ပြောင်းမယ်
-            document.documentElement.style.setProperty('--primary-color', selectedColor);
-            // Background ကိုလည်း အရောင်ဖျော့ဖျော့လေး လိုက်ပြောင်းပေးမယ်
-            document.body.style.backgroundColor = selectedColor + "11"; 
-            alert("Theme ကို အောင်မြင်စွာ တပ်ဆင်လိုက်ပါပြီ။");
-        }
-
-        function showOptions() {
-            const choice = confirm("Profile ပုံ ကြည့်မလား (OK) ပြောင်းမလား (Cancel)?");
-            if(choice) alert("ပုံကို ပြသနေသည်...");
-            else alert("Album ထဲမှ ပုံရွေးချယ်ရန် ပြင်ဆင်နေသည်...");
         }
     </script>
 </body>
