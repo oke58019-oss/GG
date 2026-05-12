@@ -3,499 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Connect App</title>
-    <!-- Font Awesome Icons CSS -->
-    <link rel="stylesheet" href="cloudflare.com">
+    <title>Connect App</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
-
         :root {
-            --bg-color: #0b0f19;
-            --panel-color: #111827;
-            --card-color: #1f2937;
-            --accent-color: linear-gradient(135deg, #6366f1, #a855f7);
-            --text-color: #f3f4f6;
+            --bg-color: #0f111a;
+            --card-bg: #1a1d29;
+            --primary-purple: #8e44ad;
+            --accent-green: #2ecc71;
+            --text-color: #ffffff;
         }
 
         body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
+            transition: background 0.3s;
         }
 
-        /* ======= (၁) SCREEN CONTROL MANAGER ======= */
-        .full-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #0b0f19;
-            z-index: 999;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+        /* Login & Screen Styles */
+        .screen { display: none; padding: 20px; min-height: 100vh; flex-direction: column; align-items: center; }
+        .active { display: flex; }
 
-        .modal-box {
-            background-color: #111827;
+        .card {
+            background: var(--card-bg);
             padding: 30px;
-            border-radius: 24px;
+            border-radius: 20px;
             width: 100%;
-            max-width: 360px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 350px;
             text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .modal-box h2 {
-            margin-bottom: 15px;
-            background: linear-gradient(to right, #6366f1, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 13px;
-            color: #9ca3af;
-            margin-bottom: 5px;
-        }
-
-        .app-input {
-            width: 100%;
-            background-color: #1f2937;
-            border: 1px solid #374151;
+        input {
+            width: 90%;
             padding: 12px;
-            border-radius: 12px;
+            margin: 10px 0;
+            background: #25293a;
+            border: 1px solid #333;
+            border-radius: 10px;
             color: white;
-            outline: none;
-            font-size: 15px;
         }
 
-        .action-btn {
-            background: var(--accent-color);
-            color: white; border: none; padding: 12px 20px;
-            border-radius: 12px; cursor: pointer; font-size: 15px;
-            font-weight: 500; width: 100%; margin-top: 10px;
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
         }
 
-        .secondary-btn {
-            background: transparent; color: #9ca3af; border: none;
-            margin-top: 15px; cursor: pointer; font-size: 14px;
-        }
+        .btn-purple { background: linear-gradient(to right, #9d50bb, #6e48aa); color: white; }
+        .btn-green { background: #2ecc71; color: white; }
 
-        /* ======= (၂) MAIN APP LAYOUT ======= */
-        .app-header {
-            background-color: var(--panel-color);
-            padding: 15px 20px;
+        /* Story & Avatar Styles */
+        .avatar-selection { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
+        .bear-avatar { width: 50px; height: 50px; cursor: pointer; border-radius: 50%; border: 2px solid transparent; }
+        .bear-avatar.selected { border-color: var(--primary-purple); }
+
+        /* Main App Header */
+        .header {
+            width: 100%;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            align-items: center;
+            padding: 15px 0;
         }
 
-        .header-avatar {
-            width: 40px; height: 40px;
-            border-radius: 50%; object-fit: cover;
-            background-color: #374151; cursor: pointer;
-            border: 2px solid #a855f7;
-        }
+        .settings-icon { font-size: 24px; cursor: pointer; }
 
-        /* STORIES ON TOP CENTER */
-        .stories-wrapper {
-            flex: 1;
+        /* Chat Bot Area */
+        .chatbot-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-purple);
+            border-radius: 50%;
             display: flex;
             justify-content: center;
-            overflow-x: auto;
-            max-width: 60%;
-            gap: 10px;
-        }
-
-        .story-bubble {
-            min-width: 60px; height: 60px;
-            background-color: var(--card-color);
-            border-radius: 50%; border: 2px solid #6366f1;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: bold; cursor: pointer;
-            text-align: center; padding: 4px; overflow: hidden;
-        }
-
-        /* ======= MAIN BODY ======= */
-        .main-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 15px;
-            position: relative;
-            overflow-y: auto;
-        }
-
-        .chat-section-title {
-            font-size: 14px; color: #9ca3af; margin-bottom: 10px;
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-
-        .person-card {
-            background-color: var(--panel-color);
-            padding: 12px 15px; border-radius: 16px;
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 10px; transition: transform 0.2s;
-        }
-        .person-card:hover { transform: translateY(-1px); }
-
-        .person-info { display: flex; align-items: center; gap: 12px; cursor: pointer; flex: 1; }
-
-        .p-avatar {
-            width: 44px; height: 44px;
-            background: #4b5563; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-weight: bold;
-        }
-
-        /* FLOATING ADD FRIEND BUTTON (BOTTOM LEFT) */
-        .floating-add-btn {
-            position: fixed;
-            bottom: 20px; left: 20px;
-            background: var(--accent-color);
-            color: white; width: 45px; height: 45px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 18px; cursor: pointer; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-            border: none; z-index: 90;
-        }
-
-        /* ======= CHAT SCREEN OVERLAY ======= */
-        .chat-overlay {
-            display: none; position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-color);
-            flex-direction: column; z-index: 500;
-        }
-
-        .chat-header {
-            background-color: var(--panel-color); padding: 15px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .chat-body { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-
-        .msg-bubble { max-width: 70%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.4; }
-        .msg-bubble.incoming { background-color: var(--card-color); align-self: flex-start; border-bottom-left-radius: 4px; }
-        .msg-bubble.outgoing { background: var(--accent-color); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-
-        .chat-footer { background-color: var(--panel-color); padding: 12px; display: flex; align-items: center; gap: 10px; }
-        .chat-input { flex: 1; background-color: var(--card-color); border: 1px solid #374151; padding: 12px 15px; border-radius: 14px; color: white; outline: none; }
-
-        /* ======= DISCOVER PEOPLE & ACCOUNT PANEL OVERLAYS ======= */
-        .side-panel-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.7); z-index: 600; justify-content: flex-end;
-        }
-
-        .side-panel {
-            width: 100%; max-width: 340px; height: 100%;
-            background-color: var(--panel-color); padding: 25px;
-            display: flex; flex-direction: column; gap: 20px; overflow-y: auto;
-            box-shadow: -5px 0 25px rgba(0,0,0,0.5);
-        }
-
-        .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .close-panel-btn { font-size: 20px; cursor: pointer; color: #9ca3af; }
-
-        /* PROFILE SETUP STYLES */
-        .avatar-setup-preview {
-            width: 110px; height: 110px; border-radius: 50%;
-            object-fit: cover; background: #374151; margin: 15px auto;
-            border: 3px solid #a855f7; display: block;
+            align-items: center;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <!-- SCREEN 1: PHONE LOGIN SCREEN -->
-    <div id="loginScreen" class="full-screen">
-        <div class="modal-box">
-            <h2>Get Started</h2>
-            <p style="color: #9ca3af; font-size: 13px; margin-bottom: 20px;">ဖုန်းနံပါတ်ဖြင့် တိုက်ရိုက်ဝင်ရောက်ပါ</p>
-            <div class="input-group">
-                <label>Name</label>
-                <input type="text" id="loginName" class="app-input" placeholder="သင့်အမည်">
-            </div>
-            <div class="input-group">
-                <label>Phone Number</label>
-                <input type="tel" id="loginPhone" class="app-input" placeholder="09xxxxxxxxx">
-            </div>
-            <button class="action-btn" onclick="handleLoginSubmit()">Login ဝင်မည်</button>
+<!-- 1. Login Screen -->
+<div id="login-screen" class="screen active">
+    <div class="card">
+        <h2 style="color: var(--primary-purple)">Get Started</h2>
+        <p>ဖုန်းနံပါတ်ဖြင့် တိုက်ရိုက်ဝင်ရောက်ပါ</p>
+        <input type="text" id="user-name" placeholder="သင့်အမည်">
+        <input type="text" id="phone-number" placeholder="09xxxxxxxxx">
+        <button class="btn btn-purple" onclick="showScreen('upload-screen')">Login ဝင်မည်</button>
+    </div>
+</div>
+
+<!-- 2. Upload Photo & Bear Selection -->
+<div id="upload-screen" class="screen">
+    <div class="card">
+        <h2 style="color: var(--primary-purple)">Upload Photo</h2>
+        <div id="preview-circle" style="width: 100px; height: 100px; border: 3px solid var(--primary-purple); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+            <span id="preview-text">Preview</span>
+        </div>
+        <p>ဝက်ဝံလေးများ ရွေးချယ်နိုင်သည်</p>
+        <div class="avatar-selection">
+            <img src="https://flaticon.com" class="bear-avatar" onclick="selectBear(this)">
+            <img src="https://flaticon.com" class="bear-avatar" onclick="selectBear(this)">
+            <img src="https://flaticon.com" class="bear-avatar" onclick="selectBear(this)">
+            <img src="https://flaticon.com" class="bear-avatar" onclick="selectBear(this)">
+            <img src="https://flaticon.com" class="bear-avatar" onclick="selectBear(this)">
+        </div>
+        <button class="btn btn-purple">Select Photo</button>
+        <button class="btn btn-green" onclick="showScreen('home-screen')">Done</button>
+        <p style="cursor:pointer; font-size: 14px;" onclick="showScreen('home-screen')">Skip (မတင်ဘဲကျော်မည်)</p>
+    </div>
+</div>
+
+<!-- 3. Home / Chat Box Screen -->
+<div id="home-screen" class="screen">
+    <div class="header">
+        <span class="settings-icon" onclick="showScreen('settings-screen')">⚙️</span>
+        <div style="display:flex; align-items: center; gap: 10px;">
+            <div style="border: 2px solid var(--primary-purple); border-radius: 50%; padding: 5px;">+ Story</div>
+            <div onclick="showScreen('profile-screen')" style="cursor: pointer;">Me</div>
         </div>
     </div>
+    <h3>CHAT BOX (စာပို့ရန်နေရာ)</h3>
+    <p style="margin-top: 50px; opacity: 0.5;">သူငယ်ချင်းစာရင်း မရှိသေးပါ။</p>
+    
+    <div class="chatbot-btn">🤖</div>
+</div>
 
-    <!-- SCREEN 2: PROFILE IMAGE SETUP (CAMERA/ALBUM) -->
-    <div id="avatarSetupScreen" class="full-screen">
-        <div class="modal-box">
-            <h2>Upload Photo</h2>
-            <p style="color: #9ca3af; font-size: 13px;">ပရိုဖိုင်ပုံတင်ရန် ကင်မရာ/အယ်လ်ဘမ်ကို ရွေးပါ</p>
-            <img id="setupAvatarDisplay" class="avatar-setup-preview" src="unsplash.com" alt="Setup Preview">
-            
-            <label class="action-btn" for="setupAvatarInput" style="display: block; text-align: center; margin-bottom: 5px;">
-                <i class="fas fa-camera-retro"></i> Select Photo
-            </label>
-            <input type="file" id="setupAvatarInput" accept="image/*" style="display: none;" onchange="previewSetupAvatar(event)">
-            
-            <button class="action-btn" onclick="finishAvatarSetup()" style="background: #10b981;">Done</button>
-            <button class="secondary-btn" onclick="skipAvatarSetup()">Skip (မတင်ဘဲကျော်မည်)</button>
-        </div>
+<!-- 4. Settings Screen -->
+<div id="settings-screen" class="screen">
+    <div class="card">
+        <h2>Settings</h2>
+        <p>Theme အရောင်ပြောင်းရန်</p>
+        <input type="color" id="theme-color" onchange="changeTheme(this.value)" value="#0f111a" style="height: 50px; cursor: pointer;">
+        <button class="btn btn-purple" onclick="logout()">Log Out</button>
+        <button class="btn" onclick="showScreen('home-screen')">Back</button>
     </div>
+</div>
 
-    <!-- MAIN APP INTERFACE -->
-    <div class="app-header">
-        <h3 style="background: linear-gradient(to right, #fff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Connect</h3>
+<!-- 5. Profile Screen -->
+<div id="profile-screen" class="screen">
+    <div class="card">
+        <h2>My Profile</h2>
+        <input type="text" placeholder="Bio ရေးရန်">
+        <input type="date" placeholder="Age (မွေးနေ့)">
+        <button class="btn btn-purple">Save Profile</button>
+        <button class="btn" onclick="showScreen('home-screen')">Back</button>
+    </div>
+</div>
+
+<script>
+    // Screen Navigation
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
         
-        <!-- STORIES IN THE MIDDLE -->
-        <div class="stories-wrapper" id="storiesWrapper">
-            <div class="story-bubble" onclick="triggerStoryCreate()">+<br>Story</div>
-        </div>
-        
-        <!-- PROFILE AT TOP RIGHT -->
-        <img id="appHeaderAvatar" class="header-avatar" src="unsplash.com" alt="Me" onclick="toggleAccountPanel(true)">
-    </div>
-
-    <div class="main-container">
-        <div class="chat-section-title">Chat Box (စာပို့ရန်နေရာ)</div>
-        <div id="friendsChatContainer">
-            <p style="color: #6b7280; font-size: 14px; text-align: center; margin-top: 20px;">သူငယ်ချင်းစာရင်း မရှိသေးပါ။</p>
-        </div>
-    </div>
-
-    <!-- FLOATING ADD FRIEND BUTTON (BOTTOM LEFT) -->
-    <button class="floating-add-btn" onclick="toggleDiscoverPanel(true)"><i class="fas fa-user-plus"></i></button>
-
-    <!-- OVERLAY 1: DISCOVER PEOPLE PANEL (ADD FRIEND) -->
-    <div class="side-panel-overlay" id="discoverPanelOverlay" onclick="toggleDiscoverPanel(false)">
-        <div class="side-panel" onclick="event.stopPropagation()">
-            <div class="panel-header">
-                <h3>Discover People</h3>
-                <i class="fas fa-times close-panel-btn" onclick="toggleDiscoverPanel(false)"></i>
-            </div>
-            <div class="person-card">
-                <div class="person-info">
-                    <div class="p-avatar" style="background-color: #ec4899;">M</div>
-                    <h4>Mya Mya</h4>
-                </div>
-                <button class="action-btn" style="width: auto; padding: 6px 12px; font-size: 13px; margin: 0;" onclick="addFriendLogic('Mya Mya', 'M', this)">Add</button>
-            </div>
-            <div class="person-card">
-                <div class="person-info">
-                    <div class="p-avatar" style="background-color: #10b981;">K</div>
-                    <h4>Kyaw Kyaw</h4>
-                </div>
-                <button class="action-btn" style="width: auto; padding: 6px 12px; font-size: 13px; margin: 0;" onclick="addFriendLogic('Kyaw Kyaw', 'K', this)">Add</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- OVERLAY 2: ACCOUNT SETTINGS PANEL -->
-    <div class="side-panel-overlay" id="accountPanelOverlay" onclick="toggleAccountPanel(false)">
-        <div class="side-panel" onclick="event.stopPropagation()">
-            <div class="panel-header">
-                <h3>My Account</h3>
-                <i class="fas fa-times close-panel-btn" onclick="toggleAccountPanel(false)"></i>
-            </div>
-            <div style="text-align: center;">
-                <img id="panelAvatarDisplay" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;" src="" alt="Me">
-                <h3 id="panelNameDisplay" style="margin-top: 10px;">Name</h3>
-                <p id="panelPhoneDisplay" style="font-size: 12px; color: #9ca3af;">09xxxxxxxxx</p>
-            </div>
-            <hr style="border: 0; border-top: 1px solid #374151; margin: 10px 0;">
-            <div class="input-group">
-                <label>Bio</label>
-                <input type="text" id="accBio" class="app-input" placeholder="သင့်အကြောင်း ရေးသားပါ" onchange="saveAccountDetails()">
-            </div>
-            <div class="input-group">
-                <label>Birthday (မွေးနေ့)</label>
-                <input type="date" id="accBirthday" class="app-input" onchange="saveAccountDetails()">
-            </div>
-            <div class="input-group">
-                <label>Age (အသက်)</label>
-                <input type="number" id="accAge" class="app-input" placeholder="အသက်" onchange="saveAccountDetails()">
-            </div>
-            <button class="action-btn" onclick="handleLogout()" style="background: #ef4444; margin-top: auto;">Log Out ထွက်မည်</button>
-        </div>
-    </div>
-
-    <!-- OVERLAY 3: PRIVATE CHAT BOX SCREEN (စာ၊ ဖုန်း၊ VC ပါဝင်မှု) -->
-    <div class="chat-overlay" id="chatOverlay">
-        <div class="chat-header">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <i class="fas fa-arrow-left" style="cursor: pointer; color: #9ca3af;" onclick="closeChatScreen()"></i>
-                <div class="p-avatar" id="activeChatAvatar">?</div>
-                <h4 id="activeChatName">Name</h4>
-            </div>
-            <div style="display: flex; gap: 20px; font-size: 18px; color: #9ca3af; cursor: pointer;">
-                <i class="fas fa-phone-alt" onclick="alert('အသံဖုန်းခေါ်ဆိုနေပါသည်...')"></i>
-                <i class="fas fa-video" onclick="alert('ဗီဒီယိုကော (VC) ขေါ်ဆိုနေပါသည်...')"></i>
-            </div>
-        </div>
-        <div class="chat-body" id="chatBody">
-            <div class="msg-bubble incoming">မင်္ဂလာပါ! စကားပြောနိုင်ပါပြီ။</div>
-        </div>
-        <div class="chat-footer">
-            <input type="text" id="chatInput" class="chat-input" placeholder="Type a message...">
-            <button class="send-message-btn" onclick="sendChatMessage()" style="background: var(--accent-color); border:none; width:44px; height:44px; border-radius:12px; color:white; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
-
-    <script>
-        let userData = JSON.parse(localStorage.getItem('user_profile')) || null;
-        let myFriendsList = [];
-
-        // App စတင်ပွင့်ချိန်တွင် Login Check ပြုလုပ်ခြင်း
-        window.onload = function() {
-            if (userData && userData.name) {
-                loadAppMainData();
-            } else {
-                document.getElementById('loginScreen').style.display = 'flex';
-            }
-        };
-
-        // Login နှိပ်ခြင်း
-        function handleLoginSubmit() {
-            const name = document.getElementById('loginName').value.trim();
-            const phone = document.getElementById('loginPhone').value.trim();
-
-            if (name === "" || phone === "") {
-                alert("အမည်နှင့် ဖုန်းနံပါတ်ကို ပြည့်စုံစွာ ဖြည့်သွင်းပါ။");
-                return;
-            }
-
-            userData = { name: name, phone: phone, avatar: 'unsplash.com', bio: '', birthday: '', age: '' };
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('avatarSetupScreen').style.display = 'flex';
+        // Save state for persistence
+        if(screenId !== 'login-screen') {
+            localStorage.setItem('isLoggedIn', 'true');
         }
+    }
 
-        // Setup မျက်နှာပြင်တွင် ပရိုဖိုင်ပုံ ရွေးချယ်ခြင်း
-        function previewSetupAvatar(event) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                document.getElementById('setupAvatarDisplay').src = reader.result;
-                userData.avatar = reader.result;
-            }
-            reader.readAsDataURL(event.target.files);
+    // Bear Selection
+    function selectBear(element) {
+        document.querySelectorAll('.bear-avatar').forEach(b => b.classList.remove('selected'));
+        element.classList.add('selected');
+        const preview = document.getElementById('preview-circle');
+        preview.innerHTML = `<img src="${element.src}" style="width:100%; border-radius:50%;">`;
+    }
+
+    // Theme Change
+    function changeTheme(color) {
+        document.body.style.backgroundColor = color;
+        localStorage.setItem('themeColor', color);
+    }
+
+    // Logout
+    function logout() {
+        localStorage.removeItem('isLoggedIn');
+        showScreen('login-screen');
+    }
+
+    // Persistence Check on Load
+    window.onload = () => {
+        if(localStorage.getItem('isLoggedIn') === 'true') {
+            showScreen('home-screen');
         }
-
-        function finishAvatarSetup() {
-            saveToLocalStorage();
-            document.getElementById('avatarSetupScreen').style.display = 'none';
-            loadAppMainData();
+        if(localStorage.getItem('themeColor')) {
+            const savedColor = localStorage.getItem('themeColor');
+            document.body.style.backgroundColor = savedColor;
+            document.getElementById('theme-color').value = savedColor;
         }
+    };
+</script>
 
-        function skipAvatarSetup() {
-            document.getElementById('avatarSetupScreen').style.display = 'none';
-            loadAppMainData();
-        }
-
-        // App ထဲရောက်လျှင် Data များထည့်သွင်းခြင်း
-        function loadAppMainData() {
-            document.getElementById('appHeaderAvatar').src = userData.avatar;
-            document.getElementById('panelAvatarDisplay').src = userData.avatar;
-            document.getElementById('panelNameDisplay').innerText = userData.name;
-            document.getElementById('panelPhoneDisplay').innerText = userData.phone;
-            
-            document.getElementById('accBio').value = userData.bio || '';
-            document.getElementById('accBirthday').value = userData.birthday || '';
-            document.getElementById('accAge').value = userData.age || '';
-        }
-
-        function saveAccountDetails() {
-            userData.bio = document.getElementById('accBio').value;
-            userData.birthday = document.getElementById('accBirthday').value;
-            userData.age = document.getElementById('accAge').value;
-            saveToLocalStorage();
-        }
-
-        function saveToLocalStorage() {
-            localStorage.setItem('user_profile', JSON.stringify(userData));
-        }
-
-        function handleLogout() {
-            localStorage.removeItem('user_profile');
-            location.reload();
-        }
-
-        // Panels Controls
-        function toggleDiscoverPanel(show) { document.getElementById('discoverPanelOverlay').style.display = show ? 'flex' : 'none'; }
-        function toggleAccountPanel(show) { document.getElementById('accountPanelOverlay').style.display = show ? 'flex' : 'none'; }
-
-        // Add Friend Logic
-        function addFriendLogic(name, init, btn) {
-            if(btn.classList.contains('added')) return;
-            btn.innerText = "Added";
-            btn.classList.add('added');
-            
-            myFriendsList.push({ name: name, initial: init });
-            renderChatFriends();
-        }
-
-        function renderChatFriends() {
-            const container = document.getElementById('friendsChatContainer');
-            container.innerHTML = "";
-            myFriendsList.forEach(fri => {
-                const card = document.createElement('div');
-                card.classList.add('person-card');
-                card.innerHTML = `
-                    <div class="person-info" onclick="openChatScreen('${fri.name}', '${fri.initial}')">
-                        <div class="p-avatar">${fri.initial}</div>
-                        <h4>${fri.name}</h4>
-                    </div>
-                    <i class="fas fa-chevron-right" style="color: #4b5563;"></i>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // Chat Box Controls
-        function openChatScreen(name, initial) {
-            document.getElementById('activeChatName').innerText = name;
-            document.getElementById('activeChatAvatar').innerText = initial;
-            document.getElementById('chatOverlay').style.display = 'flex';
-        }
-        function closeChatScreen() { document.getElementById('chatOverlay').style.display = 'none'; }
-
-        function sendChatMessage() {
-            const input = document.getElementById('chatInput');
-            const body = document.getElementById('chatBody');
-            if(input.value.trim() !== "") {
-                const div = document.createElement('div');
-                div.classList.add('msg-bubble', 'outgoing');
-                div.innerText = input.value;
-                body.appendChild(div);
-                input.value = "";
-                body.scrollTop = body.scrollHeight;
-            }
-        }
-
-        // Create Story Logic
-        function triggerStoryCreate() {
-            const txt = prompt("သင်တင်ချင်သော နေ့စဉ် Story စာသားကို ရိုက်ထည့်ပါ-");
-            if(txt && txt.trim() !== "") {
-                const wrapper = document.getElementById('storiesWrapper');
-                const bubble = document.createElement('div');
-                bubble.classList.add('story-bubble');
-                bubble.innerText = txt.substring(0,6);
-                bubble.onclick = () => alert("Story Message: " + txt);
-                wrapper.appendChild(bubble);
-            }
-        }
-    </script>
 </body>
 </html>
