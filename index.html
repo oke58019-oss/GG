@@ -3,113 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Connect App</title>
+    <title>Connect App Pro</title>
     <style>
-        :root { --bg-color: #0f111a; --card-bg: #1a1d29; --primary-purple: #8e44ad; --text-color: #ffffff; --accent-green: #2ecc71; }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow: hidden; }
+        :root { 
+            --primary-color: #8e44ad; 
+            --bg-color: #0f111a; 
+            --card-bg: #1a1d29; 
+            --text-color: #ffffff; 
+        }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow: hidden; transition: 0.3s; }
         .screen { display: none; height: 100vh; flex-direction: column; width: 100%; box-sizing: border-box; }
         .active { display: flex; }
+        .container { padding: 20px; overflow-y: auto; flex-grow: 1; }
         
-        /* New Header Style */
-        .home-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #333; }
-        .story-text { font-weight: bold; color: var(--text-color); font-size: 1.1rem; }
-        .header-icons { display: flex; gap: 15px; }
-        .green-circle-icon { 
-            width: 35px; height: 35px; border-radius: 50%; 
-            border: 2px solid var(--accent-green); 
-            background: transparent; /* အတွင်းပိုင်း နောက်ခံအရောင် */
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-        }
-
-        /* Contacts & Chats Layout */
-        .container { padding: 20px; text-align: left; overflow-y: auto; flex-grow: 1; }
-        .setting-box { background: var(--card-bg); padding: 15px; border-radius: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; }
-        .btn-purple { background: var(--primary-purple); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #333; }
         
-        .add-friend-btn { position: fixed; bottom: 30px; left: 20px; width: 55px; height: 55px; background: var(--primary-purple); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
+        /* Elements */
+        .btn-purple { background: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; }
+        .input-field { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #25293a; color: white; margin-bottom: 15px; box-sizing: border-box; }
+        .item-card { background: var(--card-bg); padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
+        .avatar { width: 50px; height: 50px; border-radius: 50%; background: #444; display: flex; align-items: center; justify-content: center; font-size: 25px; cursor: pointer; }
 
-        /* Profile Layout */
-        .profile-img-big { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--primary-purple); margin: 20px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #333; }
+        /* Chat Screen Styles */
+        #chat-messages { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px 15px; border-radius: 15px; max-width: 70%; }
+        .msg.sent { background: var(--primary-color); align-self: flex-end; }
+        .chat-input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #333; }
+
+        /* Profile Specific */
+        .theme-dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: inline-block; margin: 5px; border: 2px solid white; }
     </style>
 </head>
 <body>
 
-<!-- 1. Home Screen (CHATS) -->
-<div id="home-screen" class="screen active">
-    <div class="home-header">
-        <div class="story-text">Story</div>
-        <div class="header-icons">
-            <div class="green-circle-icon" onclick="alert('Story feature coming...')"></div>
-            <div class="header-icon" onclick="showScreen('profile-screen')" style="cursor:pointer; font-size: 24px;">👤</div>
-        </div>
+<!-- 1. Login Screen -->
+<div id="login-screen" class="screen active">
+    <div class="container" style="text-align:center; justify-content:center; display:flex; flex-direction:column;">
+        <h1>Login</h1>
+        <p>ကျေးဇူးပြု၍ ဖုန်းနံပါတ်ဖြင့် Login ဝင်ပါ။</p>
+        <input type="tel" id="login-phone" class="input-field" placeholder="Phone Number (09...)">
+        <button class="btn-purple" onclick="handleLogin()">Login ပြန်ဝင်မည်</button>
     </div>
-    
-    <div class="container">
-        <h3 style="color: var(--primary-purple);">CHATS</h3>
-        <div class="setting-box" onclick="startChat('AI Bot', '🤖')">
-            <div style="font-size:35px; background:#444; border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center;">🤖</div>
-            <div style="flex-grow:1;"><b>AI Chat Bot</b><br><small style="color:#aaa;">မင်္ဂလာပါ၊ စကားပြောရအောင်...</small></div>
-            <button class="btn-purple">Chat</button>
-        </div>
-    </div>
-    
-    <!-- အပေါင်းခလုတ် နှိပ်ရင် Contacts ပေါ်မယ် -->
-    <div class="add-friend-btn" onclick="showScreen('contacts-screen')">+</div>
 </div>
 
-<!-- 2. Contacts Screen (ဒါက အရင်က မပေါ်တဲ့ အပိုင်းပါ) -->
+<!-- 2. Home Screen (CHATS) -->
+<div id="home-screen" class="screen">
+    <div class="header">
+        <div style="font-weight:bold;">CHATS</div>
+        <div style="display:flex; gap:15px; align-items:center;">
+            <div class="avatar" style="width:35px; height:35px; font-size:18px;" onclick="showScreen('profile-screen')">👤</div>
+        </div>
+    </div>
+    <div class="container" id="chat-list">
+        <!-- Chat list items here -->
+    </div>
+    <div style="position:fixed; bottom:30px; right:20px;" class="btn-purple" onclick="showScreen('contacts-screen')">Contacts +</div>
+</div>
+
+<!-- 3. Contacts Screen -->
 <div id="contacts-screen" class="screen">
+    <div class="header">
+        <div onclick="showScreen('home-screen')">← Back</div>
+        <div style="font-weight:bold;">CONTACTS</div>
+        <div></div>
+    </div>
     <div class="container">
-        <div onclick="showScreen('home-screen')" style="cursor:pointer; margin-bottom:20px;">← Back</div>
-        <h3 style="color: var(--primary-purple);">CONTACTS</h3>
-        <input type="text" placeholder="Search friends..." style="width:100%; padding:10px; border-radius:10px; border:none; background:#25293a; color:white; margin-bottom:20px;">
-        
-        <div class="setting-box" onclick="showFriendInfo('Kyaw Kyaw', 'Hey there!', '2000-01-01', '👦')">
-            <div style="font-size:30px; background:#444; border-radius:50%; width:45px; height:45px; display:flex; align-items:center; justify-content:center;">👦</div>
-            <div style="flex-grow:1;"><b>Kyaw Kyaw</b></div>
-            <button class="btn-purple">Connect</button>
+        <input type="text" class="input-field" placeholder="Search friends...">
+        <div id="contacts-list">
+            <!-- Contacts will load here -->
         </div>
     </div>
 </div>
 
-<!-- 3. Profile Screen & Logout -->
+<!-- 4. Chat Window -->
+<div id="chat-window" class="screen">
+    <div class="header">
+        <div onclick="showScreen('home-screen')">←</div>
+        <div id="chat-user-name" style="font-weight:bold;">Name</div>
+        <div style="display:flex; gap:15px;">📞 📹</div>
+    </div>
+    <div id="chat-messages"></div>
+    <div class="chat-input-area">
+        <span onclick="alert('Image/Video upload coming...')">🖼️</span>
+        <input type="text" id="msg-input" class="input-field" style="margin-bottom:0;" placeholder="စာရိုက်ပါ...">
+        <button class="btn-purple" onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<!-- 5. Profile Screen -->
 <div id="profile-screen" class="screen">
     <div class="container" style="text-align:center;">
         <div onclick="showScreen('home-screen')" style="text-align:left; cursor:pointer;">← Back</div>
-        <div class="profile-img-big" style="font-size: 50px;">👤</div>
-        <h2>My Profile</h2>
-        <button class="btn-purple" style="background:#e74c3c; width:100%; margin-top:30px;" onclick="logout()">Log Out ထွက်မည်</button>
-    </div>
-</div>
+        <div class="avatar" style="width:100px; height:100px; margin: 20px auto; font-size:50px;">👤</div>
+        <input type="text" id="user-name" class="input-field" placeholder="သင့်နာမည်" value="My Name">
+        <input type="text" id="user-bio" class="input-field" placeholder="Bio ရေးရန်" value="Enjoying Connect App!">
+        
+        <div style="text-align:left; margin-top:10px;">
+            <label>Phone: </label><span id="display-phone"></span><br><br>
+            <label>Privacy: </label>
+            <select class="input-field" style="display:inline-block; width:auto;">
+                <option>Only Me</option>
+                <option>Friends Only</option>
+                <option>Public</option>
+            </select>
+        </div>
 
-<!-- Login Screen (ဥပမာပြရန် ID ထည့်ထားသည်) -->
-<div id="login-screen" class="screen">
-    <div class="container" style="text-align:center; justify-content:center; display:flex; flex-direction:column;">
-        <h1>Login</h1>
-        <p>ကျေးဇူးပြု၍ ပြန်လည် Login ဝင်ပါ။</p>
-        <button class="btn-purple" onclick="showScreen('home-screen')">Login ပြန်ဝင်မည်</button>
+        <div style="margin-top:20px; text-align:left;">
+            <p>Theme Color ရွေးချယ်ရန်:</p>
+            <div class="theme-dot" style="background:#8e44ad;" onclick="changeTheme('#8e44ad')"></div>
+            <div class="theme-dot" style="background:#2ecc71;" onclick="changeTheme('#2ecc71')"></div>
+            <div class="theme-dot" style="background:#e74c3c;" onclick="changeTheme('#e74c3c')"></div>
+            <div class="theme-dot" style="background:#3498db;" onclick="changeTheme('#3498db')"></div>
+        </div>
+
+        <button class="btn-purple" style="background:#e74c3c; width:100%; margin-top:30px;" onclick="showScreen('login-screen')">Log Out ထွက်မည်</button>
     </div>
 </div>
 
 <script>
+    let currentPhone = "";
+    const mockContacts = [
+        { name: "Kyaw Kyaw", phone: "091234567", icon: "👦", bio: "Available" },
+        { name: "Su Su", phone: "097778889", icon: "👧", bio: "Busy" },
+        { name: "Aung Aung", phone: "094455667", icon: "👨", bio: "At School" }
+    ];
+
     function showScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        let target = document.getElementById(id);
-        if(target) {
-            target.classList.add('active');
-        } else {
-            console.error("Screen ID မရှိပါ: " + id);
+        document.getElementById(id).classList.add('active');
+    }
+
+    function handleLogin() {
+        currentPhone = document.getElementById('login-phone').value;
+        if(currentPhone) {
+            document.getElementById('display-phone').innerText = currentPhone;
+            loadContacts();
+            showScreen('home-screen');
+        } else { alert("ဖုန်းနံပါတ်ထည့်ပါ"); }
+    }
+
+    function loadContacts() {
+        const list = document.getElementById('contacts-list');
+        list.innerHTML = "";
+        mockContacts.forEach(c => {
+            list.innerHTML += `
+                <div class="item-card">
+                    <div class="avatar" onclick="viewFriendData('${c.name}', '${c.bio}', '${c.icon}')">${c.icon}</div>
+                    <div style="flex-grow:1;"><b>${c.name}</b></div>
+                    <button class="btn-purple" onclick="openChat('${c.name}')">Chat</button>
+                </div>`;
+        });
+    }
+
+    function viewFriendData(name, bio, icon) {
+        alert("Friend Profile:\nName: " + name + "\nBio: " + bio + "\nIcon: " + icon);
+    }
+
+    function openChat(name) {
+        document.getElementById('chat-user-name').innerText = name;
+        document.getElementById('chat-messages').innerHTML = "";
+        showScreen('chat-window');
+    }
+
+    function sendMessage() {
+        const input = document.getElementById('msg-input');
+        if(input.value) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "msg sent";
+            msgDiv.innerText = input.value;
+            document.getElementById('chat-messages').appendChild(msgDiv);
+            input.value = "";
         }
     }
 
-    function logout() {
-        // Login ဝင်တဲ့ Screen ကို ပြန်ပို့ပေးမယ်
-        showScreen('login-screen'); 
-    }
-
-    // ကျန်တဲ့ Chat function တွေက အရင်အတိုင်း ထည့်ထားလို့ရပါတယ်
-    function startChat(name, img) {
-        alert(name + " နဲ့ စကားပြောဖို့ ချိတ်ဆက်နေပါတယ်...");
+    function changeTheme(color) {
+        document.documentElement.style.setProperty('--primary-color', color);
     }
 </script>
 
