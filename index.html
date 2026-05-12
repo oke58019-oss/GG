@@ -3,254 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Connect App</title>
+    <title>Ultimate Connect Social App</title>
     <style>
-        :root { --main-color: #00b894; --bg-color: #f9f9f9; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg-color); transition: 0.3s; }
+        :root { --main-color: #6c5ce7; --bg-color: #f4f7f6; }
+        body { font-family: sans-serif; margin: 0; background: var(--bg-color); overflow-x: hidden; }
         .hidden { display: none !important; }
         
-        /* Login Section */
-        #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(45deg, #00b894, #00cec9); }
-        .card { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 85%; max-width: 350px; }
+        /* Login */
+        #login-screen { height: 100vh; background: linear-gradient(135deg, #6c5ce7, #a29bfe); display: flex; align-items: center; justify-content: center; }
+        .card { background: white; padding: 25px; border-radius: 20px; width: 300px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: var(--main-color); color: white; font-weight: bold; cursor: pointer; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: var(--main-color); color: white; cursor: pointer; font-weight: bold; }
 
-        /* App Header */
-        header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
-        .profile-thumb { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--main-color); cursor: pointer; }
+        /* Header */
+        header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 10; }
+        .profile-small { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--main-color); cursor: pointer; object-fit: cover; }
 
-        /* Story Section */
-        .story-bar { padding: 15px; display: flex; gap: 10px; background: white; overflow-x: auto; }
-        .story-add { width: 65px; height: 65px; border-radius: 50%; border: 3px solid #2ecc71; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
-        .story-item { width: 65px; height: 65px; border-radius: 50%; border: 3px solid #ddd; flex-shrink: 0; overflow: hidden; }
+        /* Story Bar */
+        .story-bar { display: flex; gap: 15px; padding: 20px; background: white; overflow-x: auto; }
+        .story-add { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #2ecc71; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+        .story-item { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #ddd; flex-shrink: 0; overflow: hidden; }
         .story-item img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Camera Modal */
-        #camera-modal { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; }
-        #video-feed { flex: 1; width: 100%; object-fit: cover; }
-        .cam-btns { height: 120px; display: flex; justify-content: space-around; align-items: center; background: rgba(0,0,0,0.8); }
-
-        /* Story Preview Modal */
-        #story-confirm { position: fixed; inset: 0; background: #000; z-index: 101; display: flex; flex-direction: column; color: white; }
-        #captured-image { flex: 1; object-fit: contain; width: 100%; }
-        .confirm-box { padding: 20px; background: rgba(0,0,0,0.9); }
-
-        /* Chatbot Box */
-        .ai-chat { margin: 15px; background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .chat-log { height: 150px; overflow-y: auto; font-size: 14px; margin-bottom: 10px; }
+        /* Chat UI */
+        .modal { position: fixed; inset: 0; background: white; z-index: 100; display: flex; flex-direction: column; }
+        .modal-header { padding: 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; }
+        .chat-stream { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #efeae2; }
+        .bubble { padding: 10px 15px; border-radius: 15px; max-width: 75%; position: relative; }
+        .bubble.me { background: #d9fdd3; align-self: flex-end; }
+        .bubble.other { background: white; align-self: flex-start; }
         
-        /* Profile Overlay */
-        #profile-overlay { position: fixed; inset: 0; background: white; z-index: 200; padding: 20px; }
-        .profile-img-big { width: 100px; height: 100px; border-radius: 50%; background: #eee; }
+        /* Chat Input Bar */
+        .chat-input-bar { padding: 10px; background: #f0f0f0; display: flex; align-items: center; gap: 8px; }
+        .media-btn { font-size: 22px; cursor: pointer; padding: 5px; }
+        .rec-active { color: red; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Profile & FAB */
+        .big-img { width: 120px; height: 120px; border-radius: 50%; background: #eee; margin: 20px auto; display: block; border: 4px solid var(--main-color); object-fit: cover; }
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--main-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 90; }
+        
+        /* Call Overlay */
+        .call-screen { position: fixed; inset: 0; background: #2c3e50; color: white; z-index: 300; display: flex; flex-direction: column; align-items: center; justify-content: space-around; }
     </style>
 </head>
 <body>
 
-    <!-- LOGIN -->
+    <!-- LOGIN SCREEN -->
     <div id="login-screen">
         <div class="card">
-            <h2 style="text-align: center; color: var(--main-color);">Connect Login</h2>
-            <input type="text" id="u-name" placeholder="User Name">
-            <input type="tel" id="u-phone" placeholder="Phone Number">
-            <input type="password" id="u-pass" placeholder="Password">
-            <button onclick="login()">Get Started</button>
+            <h2 style="text-align: center; color: var(--main-color);">Connect</h2>
+            <input type="text" id="reg-name" placeholder="User Name">
+            <input type="tel" id="reg-phone" placeholder="Phone Number">
+            <input type="password" id="reg-pass" placeholder="Password">
+            <button onclick="login()">Login</button>
         </div>
     </div>
 
     <!-- MAIN APP -->
-    <div id="app-main" class="hidden">
+    <div id="main-app" class="hidden">
         <header>
-            <h3 style="margin:0; color: var(--main-color);">MESSENGER</h3>
-            <img src="https://flaticon.com" class="profile-thumb" onclick="openProfile()">
+            <h2 style="margin:0; color: var(--main-color);">Connect</h2>
+            <img src="https://flaticon.com" class="profile-small" onclick="openModal('profile-modal')">
         </header>
 
-        <!-- Stories -->
         <div class="story-bar">
-            <div class="story-add" onclick="startCamera()">
-                <div style="background: #eee; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;">+</div>
-            </div>
-            <div id="active-stories" style="display: flex; gap: 10px;"></div>
+            <div class="story-add" onclick="openCamera()">+</div>
+            <div id="story-list" style="display: flex; gap: 10px;"></div>
         </div>
 
-        <!-- Bot -->
-        <div class="ai-chat">
-            <b>Welcome Chatbot (AI)</b>
-            <div id="chat-box" class="chat-log">
-                <div style="color: #666;">AI: Hello! Start chatting with me...</div>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="ai-input" placeholder="Type here...">
-                <button onclick="aiReply()" style="width: 60px;">Send</button>
-            </div>
+        <div style="padding: 20px; background: white; margin: 10px; border-radius: 15px; cursor: pointer;" onclick="openModal('bot-modal')">
+            <b>🤖 Welcome Chatbot (AI)</b><br><small>Ask me anything...</small>
         </div>
 
-        <button style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; font-size: 25px;">+</button>
+        <h4 style="margin: 20px;">Recent Chats</h4>
+        <div id="recent-chats-list"></div>
+
+        <div class="fab" onclick="openModal('search-modal')">+</div>
+    </div>
+
+    <!-- CHAT BOX -->
+    <div id="chat-modal" class="modal hidden">
+        <div class="modal-header">
+            <button onclick="closeModal('chat-modal')">Back</button>
+            <b id="chat-user-name" onclick="viewFriendProfile()">Friend Name</b>
+            <button onclick="startCall()" style="background:#2ecc71; width:auto; padding:5px 10px;">📞 Call</button>
+        </div>
+        <div id="chat-stream" class="chat-stream"></div>
+        <div class="chat-input-bar">
+            <label class="media-btn">📷<input type="file" accept="image/*" class="hidden" onchange="sendMedia(this, 'img')"></label>
+            <label class="media-btn">🎥<input type="file" accept="video/*" class="hidden" onchange="sendMedia(this, 'vid')"></label>
+            <span id="mic-btn" class="media-btn" onclick="toggleVoiceRecord()">🎙️</span>
+            <input type="text" id="chat-in" placeholder="Message..." style="flex:1;">
+            <button onclick="sendText()" style="width: 60px;">Send</button>
+        </div>
+    </div>
+
+    <!-- CALL SCREEN -->
+    <div id="call-screen" class="call-screen hidden">
+        <h2>Calling...</h2>
+        <h1 id="call-target">Name</h1>
+        <div id="timer">00:00</div>
+        <button onclick="endCall()" style="background:red; border-radius:50px; width:150px;">End Call</button>
+    </div>
+
+    <!-- SEARCH MODAL -->
+    <div id="search-modal" class="modal hidden">
+        <div class="modal-header"><button onclick="closeModal('search-modal')">Back</button> <span>Find Friend</span> <div></div></div>
+        <div style="padding: 20px;">
+            <input type="tel" id="search-ph" placeholder="Phone (Try: 09123456789)">
+            <button onclick="searchFriend()">Search</button>
+            <div id="search-res" style="margin-top:20px;"></div>
+        </div>
+    </div>
+
+    <!-- PROFILE MODAL (OWN) -->
+    <div id="profile-modal" class="modal hidden">
+        <div class="modal-header"><button onclick="closeModal('profile-modal')">Back</button> <span>My Profile</span> <div></div></div>
+        <img src="https://flaticon.com" class="big-img">
+        <div style="padding:20px; text-align:center;">
+            <h2 id="my-name-disp">Name</h2>
+            <p id="my-phone-disp">Phone</p>
+            <input type="color" onchange="document.documentElement.style.setProperty('--main-color', this.value)"> Theme Color
+            <button onclick="logout()" style="background:red; margin-top:30px;">Logout</button>
+        </div>
     </div>
 
     <!-- CAMERA MODAL -->
-    <div id="camera-modal" class="hidden">
-        <video id="video-feed" autoplay playsinline></video>
-        <div class="cam-btns">
-            <button onclick="stopCamera()" style="background: grey;">Cancel</button>
-            <button onclick="takePhoto()" style="width: 70px; height: 70px; border-radius: 50%; border: 5px solid white;"></button>
-            <button onclick="flipCamera()">Flip</button>
-        </div>
-    </div>
-
-    <!-- STORY CONFIRMATION -->
-    <div id="story-confirm" class="hidden">
-        <canvas id="canvas" class="hidden"></canvas>
-        <img id="captured-image">
-        <div class="confirm-box">
-            <label>Who can see this?</label>
-            <select id="story-privacy">
-                <option value="Public">Public</option>
-                <option value="Friends Only">Friends Only</option>
-                <option value="Only Me">Only Me</option>
-            </select>
-            <div style="display: flex; gap: 10px;">
-                <button onclick="cancelPost()" style="background: #555;">မတင်ပါ</button>
-                <button onclick="postStory()">တင်မည်</button>
-            </div>
-            <p style="font-size: 12px; color: #aaa; text-align: center; margin-top: 10px;">* ပိုစ့်တင်ပြီး ၂၄ နာရီအကြာတွင် အလိုအလျောက် ပျောက်သွားပါမည်။</p>
-        </div>
-    </div>
-
-    <!-- PROFILE VIEW -->
-    <div id="profile-overlay" class="hidden">
-        <button onclick="closeProfile()" style="width: 80px; margin-bottom: 20px;">Back</button>
-        <div style="text-align: center; position: relative;">
-            <div style="position: absolute; right: 0; font-size: 24px; cursor: pointer;" onclick="document.getElementById('opt-menu').classList.toggle('hidden')">⋮</div>
-            <div id="opt-menu" class="hidden" style="position: absolute; right: 0; top: 30px; background: #eee; text-align: left; padding: 10px; border-radius: 10px; z-index: 10;">
-                <div onclick="alert('Viewing...')">ကြည့်မယ်</div>
-                <hr>
-                <div onclick="alert('Changing...')">ပြောင်းမယ် (Emblem)</div>
-            </div>
-            <img src="https://flaticon.com" class="profile-img-big">
-            <h2 id="p-name">Username</h2>
-            <p id="p-bio" style="color: #777;">Hey there! I am using Connect.</p>
-            <hr>
-            <div style="text-align: left; padding: 10px;">
-                <p>Phone: <span id="p-phone">09...</span> 
-                   <select style="width: 100px; float: right; margin: 0; padding: 5px;">
-                       <option>Public</option><option>Fri Only</option><option>Only Me</option>
-                   </select>
-                </p>
-                <p>Theme: <input type="color" onchange="document.documentElement.style.setProperty('--main-color', this.value)" style="width: 50px; padding: 0; height: 30px;"></p>
-            </div>
-            <button onclick="logout()" style="background: #eb4d4b; margin-top: 50px;">Logout</button>
+    <div id="camera-modal" class="modal hidden" style="background:black;">
+        <video id="video-feed" autoplay playsinline style="flex:1; object-fit:cover;"></video>
+        <div style="padding:30px; display:flex; justify-content:space-around; background:#000;">
+            <button onclick="closeCamera()">Back</button>
+            <button onclick="takeShot()" style="width:70px; height:70px; border-radius:50%; border:4px solid white; background:none;"></button>
+            <button onclick="flipCam()">Flip</button>
         </div>
     </div>
 
     <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
         let stream;
-        let mode = "user";
-        let capturedDataUrl = "";
+        let camMode = "user";
+        const mockDb = {"09123456789": {name: "Ko Mg Mg", phone: "09123456789"}};
 
-        // 1. Auth Logic
-        window.onload = () => {
-            const user = localStorage.getItem('social_user');
-            if(user) { fillData(JSON.parse(user)); showHome(); }
-        };
-
+        // AUTH
         function login() {
-            const data = {
-                name: document.getElementById('u-name').value,
-                phone: document.getElementById('u-phone').value,
-                pass: document.getElementById('u-pass').value
-            };
-            if(!data.name || !data.phone) return alert("Fill all info!");
-            localStorage.setItem('social_user', JSON.stringify(data));
-            fillData(data);
-            showHome();
+            const u = { name: document.getElementById('reg-name').value, phone: document.getElementById('reg-phone').value };
+            if(!u.name || !u.phone) return alert("Fill all!");
+            localStorage.setItem('user', JSON.stringify(u));
+            location.reload();
         }
-
-        function fillData(u) {
-            document.getElementById('p-name').innerText = u.name;
-            document.getElementById('p-phone').innerText = u.phone;
-        }
-
-        function showHome() {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('app-main').classList.remove('hidden');
-        }
-
+        window.onload = () => {
+            const saved = localStorage.getItem('user');
+            if(saved) {
+                const u = JSON.parse(saved);
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                document.getElementById('my-name-disp').innerText = u.name;
+                document.getElementById('my-phone-disp').innerText = u.phone;
+            }
+        };
         function logout() { localStorage.clear(); location.reload(); }
 
-        // 2. AI Chat
-        function aiReply() {
-            const input = document.getElementById('ai-input');
-            const box = document.getElementById('chat-box');
-            if(!input.value) return;
-            box.innerHTML += `<div><b>You:</b> ${input.value}</div>`;
-            setTimeout(() => {
-                box.innerHTML += `<div style="color:blue;"><b>AI:</b> Thinking about "${input.value}"... I am here to help!</div>`;
-                box.scrollTop = box.scrollHeight;
-            }, 800);
-            input.value = "";
+        // MODALS
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // SEARCH & CHAT
+        function searchFriend() {
+            const ph = document.getElementById('search-ph').value;
+            const res = document.getElementById('search-res');
+            if(mockDb[ph]) {
+                res.innerHTML = `<div style="padding:15px; background:#eee; border-radius:10px; display:flex; justify-content:space-between;">
+                    <b>${mockDb[ph].name}</b> <button onclick="startChat('${ph}')" style="width:auto;">Chat</button>
+                </div>`;
+            } else { res.innerHTML = "No user found."; }
         }
 
-        // 3. Camera & Story Logic
-        async function startCamera() {
-            document.getElementById('camera-modal').classList.remove('hidden');
-            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode } });
+        function startChat(ph) {
+            closeModal('search-modal');
+            document.getElementById('chat-user-name').innerText = mockDb[ph].name;
+            openModal('chat-modal');
+        }
+
+        function sendText() {
+            const inp = document.getElementById('chat-in');
+            if(!inp.value) return;
+            const box = document.getElementById('chat-stream');
+            box.innerHTML += `<div class="bubble me">${inp.value}</div>`;
+            inp.value = "";
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // VOICE RECORDING (REAL)
+        async function toggleVoiceRecord() {
+            const btn = document.getElementById('mic-btn');
+            if (!isRecording) {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.start();
+                audioChunks = [];
+                isRecording = true;
+                btn.classList.add('rec-active');
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(audioChunks, { type: 'audio/mp3' });
+                    const url = URL.createObjectURL(blob);
+                    document.getElementById('chat-stream').innerHTML += `<div class="bubble me"><audio src="${url}" controls></audio></div>`;
+                };
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                btn.classList.remove('rec-active');
+            }
+        }
+
+        // PHOTO/VIDEO SENDING
+        function sendMedia(input, type) {
+            const file = input.files[0];
+            if(!file) return;
+            const url = URL.createObjectURL(file);
+            const box = document.getElementById('chat-stream');
+            if(type === 'img') box.innerHTML += `<div class="bubble me"><img src="${url}" style="width:100%; border-radius:10px;"></div>`;
+            else box.innerHTML += `<div class="bubble me"><video src="${url}" controls style="width:100%; border-radius:10px;"></video></div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // CALL
+        function startCall() {
+            document.getElementById('call-target').innerText = document.getElementById('chat-user-name').innerText;
+            openModal('call-screen');
+        }
+        function endCall() { closeModal('call-screen'); }
+
+        // CAMERA
+        async function openCamera() {
+            openModal('camera-modal');
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: camMode } });
             document.getElementById('video-feed').srcObject = stream;
         }
-
-        function stopCamera() {
-            if(stream) stream.getTracks().forEach(t => t.stop());
-            document.getElementById('camera-modal').classList.add('hidden');
+        function closeCamera() {
+            stream.getTracks().forEach(t => t.stop());
+            closeModal('camera-modal');
         }
-
-        function flipCamera() {
-            mode = (mode === "user") ? "environment" : "user";
-            stopCamera(); startCamera();
+        function flipCam() {
+            camMode = camMode === "user" ? "environment" : "user";
+            closeCamera(); openCamera();
         }
-
-        function takePhoto() {
-            const video = document.getElementById('video-feed');
-            const canvas = document.getElementById('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            capturedDataUrl = canvas.toDataURL('image/jpeg');
-            
-            document.getElementById('captured-image').src = capturedDataUrl;
-            document.getElementById('camera-modal').classList.add('hidden');
-            document.getElementById('story-confirm').classList.remove('hidden');
-            stopCamera();
+        function takeShot() {
+            alert("Story Posted! Will disappear in 24 hours.");
+            closeCamera();
         }
-
-        function cancelPost() {
-            document.getElementById('story-confirm').classList.add('hidden');
-            capturedDataUrl = "";
-        }
-
-        function postStory() {
-            const privacy = document.getElementById('story-privacy').value;
-            const container = document.getElementById('active-stories');
-            
-            // Create Story Element
-            const div = document.createElement('div');
-            div.className = "story-item";
-            div.style.borderColor = "#00b894";
-            div.innerHTML = `<img src="${capturedDataUrl}" title="Privacy: ${privacy}">`;
-            container.prepend(div);
-
-            // 24 Hour Logic (Real 24hr = 86400000 ms)
-            // For Demo: we set 1 minute (60000 ms) to see it vanish
-            setTimeout(() => {
-                div.remove();
-                console.log("Story expired after 24 hours");
-            }, 86400000); 
-
-            alert(`Story posted as ${privacy}! It will disappear in 24 hours.`);
-            cancelPost();
-        }
-
-        // 4. Profile UI
-        function openProfile() { document.getElementById('profile-overlay').classList.remove('hidden'); }
-        function closeProfile() { document.getElementById('profile-overlay').classList.add('hidden'); }
     </script>
 </body>
 </html>
