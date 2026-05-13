@@ -1,444 +1,289 @@
 <!DOCTYPE html>
-<html lang="my">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkyChat Mobile App</title>
-    <!-- Tailwind CSS for modern & beautiful UI -->
-    <script src="jsdelivr.net"></script>
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="cloudflare.com">
-    <style>
-        body { background-color: #0f172a; font-family: sans-serif; }
-        .screen { display: none; height: 100vh; max-width: 450px; margin: 0 auto; background-color: #f0f9ff; overflow-y: auto; position: relative; }
-        .screen.active { display: flex; flex-direction: column; }
-        .sky-bg { background-color: #e0f2fe; }
-    </style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sky Chat</title>
+
+<style>
+body{
+ margin:0;
+ font-family:sans-serif;
+ background:linear-gradient(#87CEEB,#cfefff);
+}
+
+/* PAGE */
+.page{display:none;height:100vh}
+
+/* BUTTON */
+.btn{
+ background:linear-gradient(45deg,#00c6ff,#0072ff);
+ color:white;
+ border:none;
+ padding:8px 12px;
+ border-radius:20px;
+ margin:3px;
+}
+
+/* LOGIN */
+#login{
+ display:flex;
+ justify-content:center;
+ align-items:center;
+}
+.card{
+ background:white;
+ padding:20px;
+ border-radius:20px;
+ width:90%;
+ max-width:350px;
+}
+input,textarea{
+ width:100%;
+ padding:10px;
+ margin:5px 0;
+ border-radius:10px;
+ border:1px solid #ccc;
+}
+
+/* CHAT LIST */
+.top{
+ display:flex;
+ justify-content:space-between;
+ padding:10px;
+}
+.circle{
+ width:40px;height:40px;
+ border-radius:50%;
+ background:#ddd;
+ overflow:hidden;
+}
+.story{
+ width:50px;height:50px;
+ border-radius:50%;
+ border:3px solid green;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:white;
+ margin:auto;
+}
+.user{
+ background:white;
+ padding:10px;
+ margin:5px;
+ border-radius:15px;
+ display:flex;
+ justify-content:space-between;
+}
+
+/* CHAT ROOM */
+#chatRoom{display:flex;flex-direction:column}
+#msgs{flex:1;overflow:auto;padding:10px}
+.msg{
+ background:white;
+ padding:8px;
+ margin:5px;
+ border-radius:12px;
+ max-width:70%;
+}
+.me{margin-left:auto;background:#d1f0ff}
+
+#inputBar{
+ display:flex;
+ background:white;
+ padding:5px;
+}
+#inputBar input{flex:1;border:none}
+
+/* FLOAT + */
+#addBtn{
+ position:fixed;
+ bottom:20px;
+ right:20px;
+ width:50px;height:50px;
+ border-radius:50%;
+ font-size:25px;
+}
+
+/* PROFILE */
+.center{text-align:center}
+
+/* STORY */
+.storyBox{
+ background:white;
+ margin:5px;
+ padding:10px;
+ border-radius:12px;
+}
+</style>
 </head>
+
 <body>
 
-    <!-- 1. LOGIN SCREEN -->
-    <div id="loginScreen" class="screen active justify-center p-6 bg-gradient-to-tr from-sky-400 to-indigo-500">
-        <div class="bg-white/95 p-6 rounded-3xl shadow-2xl backdrop-blur-sm">
-            <div class="text-center mb-6">
-                <i class="fa-solid fa-cloud-bolt text-5xl text-sky-500 mb-2"></i>
-                <h2 class="text-2xl font-bold text-slate-800">SkyChat Login</h2>
-            </div>
-            <div class="space-y-4">
-                <input type="text" id="loginUser" placeholder="Username" class="w-full p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400">
-                <input type="tel" id="loginPhone" placeholder="Phone Number" class="w-full p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400">
-                <input type="password" id="loginPass" placeholder="Password" class="w-full p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400">
-                <button onclick="handleLogin()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold p-3 rounded-xl shadow-lg transition duration-200">Login ဝင်မည်</button>
-            </div>
-        </div>
-    </div>
+<!-- LOGIN -->
+<div id="login" class="page" style="display:flex">
+<div class="card">
+<h2>Login</h2>
+<input id="name" placeholder="Username">
+<input id="phone" placeholder="Phone">
+<input id="pass" type="password" placeholder="Password">
+<button class="btn" onclick="login()">Login</button>
+</div>
+</div>
 
-    <!-- 2. MAIN CHAT BOX SCREEN -->
-    <div id="chatBoxScreen" class="screen sky-bg">
-        <!-- Header -->
-        <div class="bg-white p-4 flex items-center justify-between shadow-sm sticky top-0 z-10">
-            <div class="flex items-center space-x-3">
-                <div onclick="showScreen('profileScreen')" class="w-11 h-11 bg-slate-300 rounded-full overflow-hidden border-2 border-sky-400 cursor-pointer shadow-inner">
-                    <img id="mainProfilePic" src="dicebear.com" class="w-full h-full object-cover">
-                </div>
-                <div>
-                    <h3 id="mainProfileName" class="font-bold text-slate-800 text-sm">User</h3>
-                    <span class="text-xs text-sky-600 font-medium">Online</span>
-                </div>
-            </div>
-            <h2 class="font-bold text-lg text-slate-700">SkyChat</h2>
-            <button onclick="handleLogout()" class="text-slate-400 hover:text-red-500 p-2"><i class="fa-solid fa-right-from-bracket text-lg"></i></button>
-        </div>
+<!-- CHAT LIST -->
+<div id="chatList" class="page">
+<div class="top">
+<div class="circle" onclick="openProfile()"></div>
+<div class="story" onclick="openStory()">+</div>
+<button class="btn" onclick="logout()">Logout</button>
+</div>
 
-        <!-- Stories Section -->
-        <div class="bg-white/80 p-3 flex space-x-4 overflow-x-auto border-b border-sky-100 scrollbar-none items-center">
-            <!-- Create Story Button -->
-            <div onclick="showScreen('createStoryScreen')" class="flex flex-col items-center flex-shrink-0 cursor-pointer">
-                <div class="w-14 h-14 rounded-full border-2 border-dashed border-sky-400 flex items-center justify-center bg-sky-50 shadow-sm">
-                    <i class="fa-solid fa-plus text-sky-500 text-lg"></i>
-                </div>
-                <span class="text-[11px] text-slate-500 mt-1 font-medium">Add Story</span>
-            </div>
-            <!-- Dynamic Stories List -->
-            <div id="storiesContainer" class="flex space-x-4"></div>
-        </div>
+<div id="users"></div>
 
-        <!-- Chat List Area (Pull down simulation container) -->
-        <div class="flex-1 p-3 space-y-2 overflow-y-auto" id="chatListContainer">
-            <div class="text-center py-2 text-xs text-slate-400 bg-sky-100/50 rounded-full mx-12">
-                <i class="fa-solid fa-arrow-down mr-1"></i> အပေါ်ကဆွဲချပီး Refresh လုပ်နိုင်သည်
-            </div>
-            <!-- AI Welcome Account -->
-            <div onclick="openChat('ai_welcome')" class="bg-white p-3 rounded-2xl flex items-center space-x-3 shadow-sm hover:shadow transition cursor-pointer border border-sky-50">
-                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-500 font-bold text-lg">AI</div>
-                <div class="flex-1">
-                    <div class="flex justify-between items-baseline">
-                        <h4 class="font-bold text-slate-800 text-sm">Welcome AI</h4>
-                        <span class="text-[10px] text-slate-400">Just now</span>
-                    </div>
-                    <p class="text-xs text-slate-500 truncate" id="aiLastMsg">SkyChat မှ ကြိုဆိုပါတယ်ခင်ဗျာ။</p>
-                </div>
-            </div>
-            <!-- Dynamic Active Chats List -->
-            <div id="activeChatsList" class="space-y-2"></div>
-        </div>
+<button id="addBtn" class="btn" onclick="openAdd()">+</button>
+</div>
 
-        <!-- Floating Add Friend Button -->
-        <button onclick="showScreen('addFriendScreen')" class="absolute bottom-6 right-6 w-14 h-14 bg-sky-500 hover:bg-sky-600 text-white rounded-full flex items-center justify-center shadow-xl transition transform hover:scale-105">
-            <i class="fa-solid fa-plus text-xl"></i>
-        </button>
-    </div>
+<!-- ADD -->
+<div id="addPage" class="page">
+<button class="btn" onclick="back()">⬅</button>
+<input id="search" placeholder="Phone / ID">
+<button class="btn" onclick="searchUser()">Search</button>
+<div id="result"></div>
+</div>
 
-    <!-- 3. MY PROFILE SCREEN -->
-    <div id="profileScreen" class="screen bg-white">
-        <div class="p-4 flex items-center justify-between border-b border-slate-100 sticky top-0 bg-white z-10">
-            <button onclick="showScreen('chatBoxScreen')" class="text-slate-600 p-2"><i class="fa-solid fa-arrow-left text-lg"></i></button>
-            <h2 class="font-bold text-slate-800">My Profile</h2>
-            <div class="relative">
-                <button onclick="toggleElement('profileMenu')" class="text-slate-600 p-2"><i class="fa-solid fa-ellipsis-vertical text-lg"></i></button>
-                <div id="profileMenu" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-slate-100 py-1 z-20">
-                    <button onclick="viewProfilePic()" class="w-full text-left px-4 py-2 text-xs hover:bg-slate-50 text-slate-700"><i class="fa-solid fa-eye mr-2"></i>ပရိုဖိုင်ကြည့်မည်</button>
-                    <button onclick="triggerFile('profileInput')" class="w-full text-left px-4 py-2 text-xs hover:bg-slate-50 text-slate-700"><i class="fa-solid fa-pen mr-2"></i>ပရိုဖိုင်ပြောင်းမည်</button>
-                    <button onclick="deleteProfilePic()" class="w-full text-left px-4 py-2 text-xs hover:bg-slate-50 text-red-500"><i class="fa-solid fa-trash mr-2"></i>ပရိုဖိုင်ဖျက်မည်</button>
-                </div>
-            </div>
-        </div>
+<!-- CHAT -->
+<div id="chatRoom" class="page">
+<div class="top">
+<button class="btn" onclick="back()">⬅</button>
+<span id="chatName"></span>
+</div>
 
-        <input type="file" id="profileInput" class="hidden" accept="image/*" onchange="changeProfilePic(this)">
+<div id="msgs"></div>
 
-        <div class="p-6 flex flex-col items-center text-center space-y-4" id="profileDetailCard">
-            <div class="w-28 h-28 rounded-full border-4 border-sky-400 overflow-hidden shadow-md">
-                <img id="myProfilePic" src="dicebear.com" class="w-full h-full object-cover">
-            </div>
-            <div>
-                <h3 id="myProfileName" class="text-xl font-bold text-slate-800">User Name</h3>
-                <p class="text-xs text-slate-400 mt-0.5">ID: <span id="myProfileId">09...</span></p>
-            </div>
+<div id="inputBar">
+<input id="msg">
+<input type="file" id="file" accept="image/*,video/*">
+<button class="btn" onclick="send()">Send</button>
+</div>
+</div>
 
-            <!-- Bio Section -->
-            <div class="w-full bg-slate-50 p-3 rounded-2xl border border-slate-100 text-left">
-                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Bio</label>
-                <textarea id="myBio" placeholder="စိတ်ကြိုက် ရေးရန်နေရာ..." class="w-full bg-transparent text-sm text-slate-700 focus:outline-none resize-none" rows="2" oninput="saveBio()"></textarea>
-            </div>
+<!-- PROFILE -->
+<div id="profile" class="page center">
+<button class="btn" onclick="back()">⬅</button>
 
-            <!-- Privacy Setting -->
-            <div class="w-full bg-slate-50 p-3 rounded-2xl border border-slate-100 text-left flex items-center justify-between">
-                <div>
-                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">ID Privacy</label>
-                    <span class="text-xs text-slate-500">ဖုန်းနံပါတ်ကို ဘယ်သူတွေမြင်မလဲ</span>
-                </div>
-                <select id="idPrivacy" onchange="savePrivacy()" class="bg-white border border-slate-200 text-xs rounded-lg p-1.5 focus:outline-none text-slate-700 font-medium">
-                    <option value="public">Public</option>
-                    <option value="friend">Friend Only</option>
-                    <option value="onlyme">Only Me</option>
-                </select>
-            </div>
+<div class="circle" id="pimg"></div>
+<input type="file" onchange="changePic(this)">
 
-            <!-- Background Theme Colors -->
-            <div class="w-full text-left space-y-2">
-                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">နောက်ခံပြောင်းရန်အရောင်များ</label>
-                <div class="flex justify-between p-2 bg-slate-50 rounded-2xl border border-slate-100">
-                    <button onclick="selectTheme('#f0f9ff')" class="w-8 h-8 rounded-full bg-sky-100 border border-slate-300 shadow-inner"></button> <!-- Default Sky -->
-                    <button onclick="selectTheme('#fce7f3')" class="w-8 h-8 rounded-full bg-pink-200"></button>
-                    <button onclick="selectTheme('#ffedd5')" class="w-8 h-8 rounded-full bg-orange-100"></button>
-                    <button onclick="selectTheme('#dcfce7')" class="w-8 h-8 rounded-full bg-green-100"></button>
-                    <button onclick="selectTheme('#ffffff')" class="w-8 h-8 rounded-full bg-white border border-slate-200"></button>
-                    <button onclick="selectTheme('#1e293b')" class="w-8 h-8 rounded-full bg-slate-800"></button>
-                </div>
-                <button onclick="applyTheme()" class="w-full bg-slate-800 text-white text-xs font-bold p-2.5 rounded-xl mt-2 transition active:scale-95">တပ်ဆင်မည်</button>
-            </div>
+<h3 id="pname"></h3>
+<p id="pid"></p>
 
-            <!-- 24hr Expired Stories Collection Area -->
-            <div class="w-full text-left pt-2 border-t border-slate-100">
-                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2"><i class="fa-solid fa-box-archive mr-1"></i> Story Collection (24 နာရီပြည့်ပြီးသားများ)</label>
-                <div id="collectionContainer" class="flex space-x-3 overflow-x-auto py-1"></div>
-            </div>
-        </div>
-    </div>
+<textarea id="bio" placeholder="Bio"></textarea>
 
-    <!-- 4. CREATE STORY SCREEN -->
-    <div id="createStoryScreen" class="screen bg-slate-900 justify-between text-white p-4">
-        <div class="flex items-center justify-between">
-            <button onclick="showScreen('chatBoxScreen')" class="text-white/80 p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <h3 class="font-bold">Create Story</h3>
-            <select id="storyPrivacy" class="bg-slate-800 border border-slate-700 text-xs rounded-lg p-1.5 focus:outline-none text-white font-medium">
-                <option value="public">Public</option>
-                <option value="friend">Friend Only</option>
-                <option value="onlyme">Only Me</option>
-            </select>
-        </div>
+<select id="privacy">
+<option>Only Me</option>
+<option>Friend Only</option>
+<option>Public</option>
+</select>
 
-        <!-- Preview Area -->
-        <div class="flex-1 my-4 bg-slate-800 rounded-3xl overflow-hidden flex items-center justify-center relative border border-slate-700 shadow-inner">
-            <img id="storyPreview" class="hidden w-full h-full object-cover">
-            <video id="storyVideoPreview" class="hidden w-full h-full object-cover" controls></video>
-            <div id="storyPlaceholder" class="text-center p-6 text-slate-500">
-                <i class="fa-solid fa-photo-film text-4xl mb-2"></i>
-                <p class="text-xs">ပုံ သို့မဟုတ် ဗီဒီယို ရွေးချယ်ပေးပါ</p>
-            </div>
-        </div>
+<br>
+<button class="btn" onclick="saveProfile()">Save</button>
 
-        <!-- Selection & Actions -->
-        <div class="space-y-4">
-            <div class="flex justify-center space-x-4">
-                <button onclick="triggerFile('storyInput')" class="bg-indigo-600 px-4 py-2 rounded-xl text-xs font-semibold shadow flex items-center space-x-1.5"><i class="fa-solid fa-images"></i> <span>Gallery / Emblem</span></button>
-            </div>
-            <input type="file" id="storyInput" class="hidden" accept="image/*,video/*" onchange="previewStoryMedia(this)">
-            
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="showScreen('chatBoxScreen')" class="bg-slate-800 border border-slate-700 text-slate-300 font-bold p-3 rounded-xl text-sm transition">မတင်ပါ</button>
-                <button onclick="publishStory()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold p-3 rounded-xl text-sm shadow-lg transition">တင်မည်</button>
-            </div>
-        </div>
-    </div>
+<h4>Background</h4>
+<button class="btn" onclick="bg('pink')">Pink</button>
+<button class="btn" onclick="bg('orange')">Orange</button>
+<button class="btn" onclick="bg('lightgreen')">Green</button>
+<button class="btn" onclick="bg('white')">White</button>
+<button class="btn" onclick="bg('black')">Black</button>
+</div>
 
-    <!-- 5. VIEW STORY SCREEN -->
-    <div id="viewStoryScreen" class="screen bg-black justify-between text-white p-4">
-        <div class="flex items-center justify-between z-10">
-            <div class="flex items-center space-x-2">
-                <div class="w-8 h-8 rounded-full bg-slate-600 overflow-hidden"><img id="storyViewerAvatar" src="" class="w-full h-full object-cover"></div>
-                <span id="storyViewerName" class="font-bold text-xs">Name</span>
-            </div>
-            <div class="relative">
-                <button onclick="toggleElement('storyActionMenu')" class="text-white/80 p-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                <div id="storyActionMenu" class="hidden absolute right-0 mt-1 w-28 bg-slate-900 rounded-lg shadow-xl border border-slate-800 py-1 text-xs">
-                    <button onclick="deleteCurrentStory()" id="storyDeleteBtn" class="w-full text-left px-3 py-2 text-red-400 hover:bg-slate-800"><i class="fa-solid fa-trash mr-1"></i> ဖျက်မည်</button>
-                    <button onclick="openStoryPrivacyChange()" class="w-full text-left px-3 py-2 text-slate-300 hover:bg-slate-800"><i class="fa-solid fa-lock mr-1"></i> Privacy</button>
-                </div>
-            </div>
-        </div>
+<!-- STORY -->
+<div id="story" class="page">
+<button class="btn" onclick="back()">⬅</button>
 
-        <!-- Story Display Media -->
-        <div class="absolute inset-0 flex items-center justify-center z-0">
-            <img id="storyViewImg" class="hidden w-full h-full object-contain">
-            <video id="storyViewVid" class="hidden w-full h-full object-contain" autoplay loop muted controls></video>
-        </div>
+<input type="file" id="storyFile" accept="image/*,video/*">
+<select id="sPrivacy">
+<option>Only Me</option>
+<option>Friend Only</option>
+<option>Public</option>
+</select>
 
-        <!-- Footer / Interactions -->
-        <div class="z-10 flex justify-between items-center bg-gradient-to-t from-black/80 p-3 rounded-xl">
-            <!-- Viewers counter trigger -->
-            <button onclick="toggleElement('viewersModal')" class="text-xs text-white/80 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm"><i class="fa-solid fa-eye mr-1"></i> ကြည့်ရှုသူများ</button>
-            <button onclick="likeCurrentStory()" class="w-10 h-10 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-lg"><i class="fa-solid fa-heart"></i></button>
-        </div>
+<button class="btn" onclick="uploadStory()">Post</button>
 
-        <!-- Viewers Modal Overlay inside view -->
-        <div id="viewersModal" class="hidden absolute inset-x-0 bottom-0 bg-slate-900 text-white p-4 rounded-t-3xl max-h-48 overflow-y-auto z-20 transition border-t border-slate-800">
-            <div class="flex justify-between items-center mb-2"><h4 class="text-xs font-bold text-slate-400">ကြည့်ရှုသူများနှင့် Likes</h4><button onclick="toggleElement('viewersModal')" class="text-slate-400 text-xs">ပိတ်မည်</button></div>
-            <ul id="viewersList" class="text-xs space-y-1.5 text-slate-300"></ul>
-        </div>
-    </div>
+<div id="stories"></div>
+</div>
 
-    <!-- 6. ADD FRIEND / SEARCH SCREEN -->
-    <div id="addFriendScreen" class="screen bg-white p-4">
-        <div class="flex items-center space-x-3 mb-4">
-            <button onclick="showScreen('chatBoxScreen')" class="text-slate-600"><i class="fa-solid fa-arrow-left text-lg"></i></button>
-            <h2 class="font-bold text-slate-800">အကောင့်ရှာရန်နေရာ</h2>
-        </div>
-        <div class="space-y-4">
-            <div class="relative">
-                <input type="text" id="searchQuery" placeholder="IDနံပါတ် (သို့) phoneနံပါတ်ဖြင့်ရှာရန်" class="w-full p-3 pr-10 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-sky-400">
-                <button onclick="searchUser()" class="absolute right-3 top-3.5 text-slate-400 hover:text-sky-500"><i class="fa-solid fa-magnifying-glass"></i></button>
-            </div>
-            <div id="searchResults" class="space-y-2"></div>
-        </div>
-    </div>
+<script>
 
-    <!-- 7. PRIVATE CHAT ROOM SCREEN -->
-    <div id="chatRoomScreen" class="screen sky-bg">
-        <!-- Header -->
-        <div class="bg-white p-3 flex items-center justify-between shadow-sm sticky top-0 z-10">
-            <div class="flex items-center space-x-2">
-                <button onclick="showScreen('chatBoxScreen')" class="text-slate-600 p-1 mr-1"><i class="fa-solid fa-arrow-left text-sm"></i></button>
-                <div onclick="viewFriendProfile()" class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden border border-sky-200 cursor-pointer">
-                    <img id="chatRoomAvatar" src="" class="w-full h-full object-cover">
-                </div>
-                <div>
-                    <h3 id="chatRoomName" class="font-bold text-slate-800 text-xs">Friend</h3>
-                    <p id="typingIndicator" class="text-[10px] text-green-500 font-semibold hidden">typing...</p>
-                </div>
-            </div>
-        </div>
+/* NAV */
+function show(x){
+ document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+ document.getElementById(x).style.display="block";
+}
+function back(){show("chatList")}
 
-        <!-- Messages Messages Space -->
-        <div id="messagesContainer" class="flex-1 p-4 space-y-3 overflow-y-auto flex flex-col"></div>
+/* LOGIN */
+function login(){
+ if(localStorage.pass && pass.value!=localStorage.pass){
+  alert("Password မှား");
+  return;
+ }
+ localStorage.name=name.value;
+ localStorage.phone=phone.value;
+ localStorage.pass=pass.value;
 
-        <!-- Input Box Area -->
-        <div class="p-3 bg-white border-t border-sky-100 flex items-center space-x-2 sticky bottom-0 z-10">
-            <button onclick="triggerFile('chatMediaInput')" class="text-slate-400 hover:text-sky-500 p-1"><i class="fa-solid fa-paperclip text-lg"></i></button>
-            <input type="file" id="chatMediaInput" class="hidden" accept="image/*,video/*" onchange="sendMediaMessage(this)">
-            <input type="text" id="msgInput" placeholder="စာရိုက်ပါ..." class="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-sky-400" oninput="handleTyping()">
-            <button onclick="sendTextMessage()" class="bg-sky-500 text-white px-3 py-2 rounded-xl text-xs font-bold shadow hover:bg-sky-600 transition"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
+ show("chatList");
+ loadUsers();
+}
 
-    <!-- 8. FRIEND'S PROFILE VIEW SCREEN -->
-    <div id="friendProfileScreen" class="screen bg-white">
-        <div class="p-4 flex items-center border-b border-slate-100 sticky top-0 bg-white z-10">
-            <button onclick="showScreen('chatRoomScreen')" class="text-slate-600 p-2"><i class="fa-solid fa-arrow-left text-lg"></i></button>
-            <h2 class="font-bold text-slate-800 ml-2">Friend's Profile</h2>
-        </div>
-        <div class="p-6 flex flex-col items-center text-center space-y-4">
-            <div class="w-24 h-24 rounded-full border-4 border-sky-200 overflow-hidden shadow-sm">
-                <img id="fProfilePic" src="" class="w-full h-full object-cover">
-            </div>
-            <div>
-                <h3 id="fProfileName" class="text-lg font-bold text-slate-800">Friend Name</h3>
-                <p id="fProfileId" class="text-xs text-slate-400 mt-0.5">ID: Hidden</p>
-            </div>
-            <div class="flex space-x-3 w-full">
-                <button id="fAddBtn" onclick="toggleFriendship()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold p-2 rounded-xl text-xs transition"></button>
-                <button onclick="showScreen('chatRoomScreen')" class="flex-1 bg-sky-500 hover:bg-sky-600 text-white font-bold p-2 rounded-xl text-xs shadow transition">Chat</button>
-            </div>
-            <!-- Bio & Media Feed -->
-            <div class="w-full text-left bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                <span class="text-[10px] font-bold text-slate-400 block mb-0.5">BIO</span>
-                <p id="fProfileBio" class="text-xs text-slate-600">အချက်အလက်မရှိပါ။</p>
-            </div>
-            <div class="w-full text-left pt-2 border-t border-slate-100">
-                <label class="text-[11px] font-bold text-slate-400 uppercase block mb-2">တင်ထားသော ပုံနှင့် ဗီဒီယိုများ</label>
-                <div id="fProfileMediaFeed" class="grid grid-cols-3 gap-2"></div>
-            </div>
-        </div>
-    </div>
+/* LOGOUT */
+function logout(){
+ location.reload();
+}
 
-    <!-- JAVASCRIPT SYSTEM ENGINE -->
-    <script>
-        // Mock DB for user profiles simulating real accounts registered
-        const registeredUsers = {
-            "09123456789": { username: "Kyaw Kyaw", phone: "09123456789", bio: "Hello world!", idPrivacy: "public", theme: "#f0f9ff", avatar: "dicebear.com" },
-            "09987654321": { username: "Su Su", phone: "09987654321", bio: "Stay happy 😊", idPrivacy: "friend", theme: "#f0f9ff", avatar: "dicebear.com" },
-            "ai_welcome": { username: "Welcome AI", phone: "AI-BOT", bio: "SkyChat AI Smart Assistant", idPrivacy: "public", theme: "#f0f9ff", avatar: "" }
-        };
+/* USERS */
+function loadUsers(){
+ users.innerHTML="";
+ let arr=["091111","092222","093333"];
+ arr.forEach(u=>{
+  let d=document.createElement("div");
+  d.className="user";
+  d.innerHTML=`${u}
+  <div>
+   <button class="btn" onclick="addFriend('${u}')">Add</button>
+   <button class="btn" onclick="chat('${u}')">Chat</button>
+  </div>`;
+  users.appendChild(d);
+ });
+}
 
-        // App States
-        let currentUser = null;
-        let activeChatUserId = null;
-        let selectedThemeColor = "#f0f9ff";
-        let temporaryStoryMedia = null;
-        let activeViewStoryObj = null;
-        let typingTimeout = null;
+/* ADD */
+function openAdd(){show("addPage")}
+function searchUser(){
+ result.innerHTML=`<div class="user">
+  0912345
+  <button class="btn" onclick="chat('0912345')">Chat</button>
+ </div>`;
+}
 
-        // Initialize App & Restore Session
-        window.onload = function() {
-            initLocalStorageData();
-            const savedSession = localStorage.getItem('skyChat_session');
-            if(savedSession) {
-                currentUser = JSON.parse(savedSession);
-                loadUserData();
-                showScreen('chatBoxScreen');
-            }
-            simulateAIReplyLoop();
-        };
+/* CHAT */
+let current="";
+function chat(n){
+ current=n;
+ chatName.innerText=n;
+ show("chatRoom");
+ loadMsg();
+}
 
-        function initLocalStorageData() {
-            if(!localStorage.getItem('skyChat_stories')) localStorage.setItem('skyChat_stories', JSON.stringify([]));
-            if(!localStorage.getItem('skyChat_collections')) localStorage.setItem('skyChat_collections', JSON.stringify([]));
-            if(!localStorage.getItem('skyChat_messages')) localStorage.setItem('skyChat_messages', JSON.stringify({}));
-            if(!localStorage.getItem('skyChat_friends')) localStorage.setItem('skyChat_friends', JSON.stringify([]));
-        }
+function send(){
+ let text=msg.value;
+ let arr=JSON.parse(localStorage["msg_"+current]||"[]");
+ arr.push({t:text,me:true});
+ localStorage["msg_"+current]=JSON.stringify(arr);
+ msg.value="";
+ loadMsg();
+}
 
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const target = document.getElementById(screenId);
-            target.classList.add('active');
-            
-            // Context triggers when loading specific viewports
-            if(screenId === 'chatBoxScreen') { renderStories(); renderActiveChats(); }
-            if(screenId === 'profileScreen') { loadUserData(); }
-        }
-
-        function toggleElement(id) { document.getElementById(id).classList.toggle('hidden'); }
-        function triggerFile(id) { document.getElementById(id).click(); }
-
-        // --- AUTH SYSTEM ---
-        function handleLogin() {
-            const user = document.getElementById('loginUser').value.trim();
-            const phone = document.getElementById('loginPhone').value.trim();
-            const pass = document.getElementById('loginPass').value.trim();
-
-            if(!user || !phone || !pass) return alert("အချက်အလက်အားလုံး ဖြည့်စွက်ပေးပါ။");
-
-            currentUser = { username: user, phone: phone, password: pass, bio: "SkyChat ကို သုံးစွဲနေပါသည်။", idPrivacy: "public", theme: "#f0f9ff", avatar: "dicebear.com" + user };
-            localStorage.setItem('skyChat_session', JSON.stringify(currentUser));
-            loadUserData();
-            showScreen('chatBoxScreen');
-            
-            // Add automated Welcome message from AI if not exists
-            appendWelcomeMessage();
-        }
-
-        function handleLogout() {
-            const confirmPass = prompt("ထွက်ရန် Password ကို ပြန်လည်ရိုက်ထည့်ပါ -");
-            if(confirmPass === currentUser.password) {
-                localStorage.removeItem('skyChat_session');
-                currentUser = null;
-                showScreen('loginScreen');
-            } else {
-                alert("Password မှားယွင်းနေပါသည်။");
-            }
-        }
-
-        function loadUserData() {
-            document.getElementById('mainProfileName').innerText = currentUser.username;
-            document.getElementById('myProfileName').innerText = currentUser.username;
-            document.getElementById('myProfileId').innerText = currentUser.phone;
-            document.getElementById('myBio').value = currentUser.bio;
-            document.getElementById('idPrivacy').value = currentUser.idPrivacy;
-            document.getElementById('mainProfilePic').src = currentUser.avatar;
-            document.getElementById('myProfilePic').src = currentUser.avatar;
-            document.getElementById('chatBoxScreen').style.backgroundColor = currentUser.theme || '#f0f9ff';
-            renderCollections();
-        }
-
-        function saveBio() {
-            currentUser.bio = document.getElementById('myBio').value;
-            localStorage.setItem('skyChat_session', JSON.stringify(currentUser));
-        }
-
-        function savePrivacy() {
-            currentUser.idPrivacy = document.getElementById('idPrivacy').value;
-            localStorage.setItem('skyChat_session', JSON.stringify(currentUser));
-        }
-
-        function selectTheme(color) { selectedThemeColor = color; }
-        function applyTheme() {
-            currentUser.theme = selectedThemeColor;
-            document.getElementById('chatBoxScreen').style.backgroundColor = selectedThemeColor;
-            localStorage.setItem('skyChat_session', JSON.stringify(currentUser));
-            alert("နောက်ခံအရောင် ပြောင်းလဲတပ်ဆင်ပြီးပါပြီ။");
-        }
-
-        function changeProfilePic(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentUser.avatar = e.target.result;
-                    document.getElementById('myProfilePic').src = e.target.result;
-                    document.getElementById('mainProfilePic').src = e.target.result;
-                    localStorage.setItem('skyChat_session', JSON.stringify(currentUser));
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-        function deleteProfilePic() {
-            currentUser.avatar = "dicebear.com" + currentUser.username;
-            document.getElementById('myProfilePic').src = currentUser.avatar;
-            document.getElementById('mainProfilePic').src = currentUser.avatar;
-            localStorage.setItem('skyChat_session', JSON.stringify(currentUser));
-            toggleElement('profileMenu');
-        }
-        function viewProfilePic() { alert("ပရိုဖိုင်ပုံ လိပ်စာ - \n" + currentUser.avatar.substring(0, 60) + "..."); }
-
-        // --- STORY ENGINE (WITH TIMEOUT & EMULATED EMBLEM RECOGNITION) ---
-        function previewStoryMedia(input) {
-            if(input.files && input.files[0]) {
-                const file = input.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    temporaryStoryMedia = { type: file.type.startsWith('video') ? 'video' : 'image', data: e.target.result };
-                    document.getElementById('storyPlaceholder').classList.add('hidden');
-                    if(temporaryStoryMedia.type === 'image') {
-                        document.getElementById('storyPreview').src = e.target.result;
-                        document.getElementById('storyPreview').classList.remove('hidden');
-                        document.getElementById('storyVideoPreview').classList.add('hidden');
-                    } else {
+function loadMsg(){
+ msgs.innerHTML="";
+ let arr
